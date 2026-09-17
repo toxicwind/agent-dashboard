@@ -12,12 +12,12 @@ use serde_with::serde_as;
 use tracing::Instrument;
 use turbo_rcstr::{RcStr, rcstr};
 use turbo_tasks::{
-    Completion, OperationVc, ReadRef, ResolvedVc, TaskInput, TryJoinIterExt, ValueToString,
-    ValueToStringRef, Vc, trace::TraceRawVcs,
+    Completion, OperationVc, ReadRef, ResolvedVc, TryJoinIterExt, ValueToString, ValueToStringRef,
+    Vc, trace::TraceRawVcs,
 };
 use turbo_tasks_env::ProcessEnv;
 use turbo_tasks_fs::{
-    File, FileContent, FileSystemPath,
+    File, FileContent, FileSystemEntryType, FileSystemPath,
     glob::{Glob, GlobOptions},
     json::parse_json_with_source_context,
     rope::Rope,
@@ -29,9 +29,10 @@ use turbopack_core::{
     file_source::FileSource,
     ident::AssetIdent,
     issue::{Issue, IssueExt, IssueSeverity, IssueSource, IssueStage, StyledString},
+    module::Module,
     module_graph::{
         ModuleGraph, SingleModuleGraph,
-        chunk_group_info::{ChunkGroup, ChunkGroupEntry},
+        chunk_group_info::{ChunkGroup, ChunkGroupEntry, EntryHeuristics},
     },
     output::{ExpandOutputAssetsInput, OutputAsset, OutputAssets, expand_output_assets},
     reference_type::{EcmaScriptModulesReferenceSubType, InnerAssets, ReferenceType},
@@ -96,6 +97,8 @@ pub struct WebpackLoaders {
     evaluate_context: ResolvedVc<Box<dyn AssetContext>>,
     execution_context: ResolvedVc<ExecutionContext>,
     loaders: ResolvedVc<WebpackLoaderItems>,
+    target: ResolvedVc<RcStr>,
+    mode: RcStr,
     rename_as: Option<RcStr>,
     resolve_options_context: ResolvedVc<ResolveOptionsContext>,
     source_maps: bool,
@@ -108,6 +111,8 @@ impl WebpackLoaders {
         evaluate_context: ResolvedVc<Box<dyn AssetContext>>,
         execution_context: ResolvedVc<ExecutionContext>,
         loaders: ResolvedVc<WebpackLoaderItems>,
+        target: ResolvedVc<RcStr>,
+        mode: RcStr,
         rename_as: Option<RcStr>,
         resolve_options_context: ResolvedVc<ResolveOptionsContext>,
         source_maps: bool,
@@ -116,6 +121,8 @@ impl WebpackLoaders {
             evaluate_context,
             execution_context,
             loaders,
+            target,
+            mode,
             rename_as,
             resolve_options_context,
             source_maps,
@@ -221,6 +228,36 @@ async fn webpack_loaders_executor(
     ))
 }
 
+#[turbo_tasks::function]
+async fn build_files_changed(
+    cwd: FileSystemPath,
+    paths: Vec<RcStr>,
+    source: ResolvedVc<Box<dyn Source>>,
+) -> Result<Vc<Completion>> {
+    for path in paths {
+        let path = cwd.join(&path)?;
+        let entry_type = path.get_type().await?;
+        match &*entry_type {
+            FileSystemEntryType::File | FileSystemEntryType::NotFound => {
+                path.read().await?;
+            }
+            FileSystemEntryType::Directory
+            | FileSystemEntryType::Symlink
+            | FileSystemEntryType::Other
+            | FileSystemEntryType::Error => {}
+        }
+        if !matches!(&*entry_type, FileSystemEntryType::File) {
+            BuildDependencyIssue {
+                source: IssueSource::from_source_only(source),
+                path,
+            }
+            .resolved_cell()
+            .emit();
+        }
+    }
+    Ok(Completion::new())
+}
+
 #[turbo_tasks::value_impl]
 impl WebpackLoadersProcessedAsset {
     #[turbo_tasks::function]
@@ -318,6 +355,8 @@ impl WebpackLoadersProcessedAsset {
                     ResolvedVc::cell(resource_path.to_string().into()),
                     ResolvedVc::cell(self.source.ident().await?.query.to_string().into()),
                     ResolvedVc::cell(json!(*loaders)),
+                    ResolvedVc::cell(transform.target.await?.to_string().into()),
+                    ResolvedVc::cell(transform.mode.to_string().into()),
                     ResolvedVc::cell(transform.source_maps.into()),
                 ],
                 additional_invalidation: Completion::immutable().to_resolved().await?,
@@ -437,9 +476,8 @@ pub enum InfoMessage {
     },
 }
 
-#[derive(
-    Debug, Clone, TaskInput, Hash, PartialEq, Eq, Deserialize, TraceRawVcs, Encode, Decode,
-)]
+#[turbo_tasks::task_input]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Deserialize, TraceRawVcs, Encode, Decode)]
 #[serde(rename_all = "camelCase")]
 pub struct WebpackResolveOptions {
     alias_fields: Option<Vec<RcStr>>,
@@ -495,7 +533,8 @@ pub enum ResponseMessage {
     },
 }
 
-#[derive(Clone, PartialEq, Eq, Hash, TaskInput, Debug, TraceRawVcs, Encode, Decode)]
+#[turbo_tasks::task_input]
+#[derive(Clone, PartialEq, Eq, Hash, Debug, TraceRawVcs, Encode, Decode)]
 pub struct WebpackLoaderContext {
     pub entries: ResolvedVc<EvaluateEntries>,
     pub cwd: FileSystemPath,
@@ -621,11 +660,20 @@ impl EvaluateContext for WebpackLoaderContext {
                         .try_join();
                     let file_subscriptions = file_paths
                         .iter()
-                        .map(|p| async move { self.cwd.join(p)?.read().await })
+                        .map(async |p| self.cwd.join(p)?.read().await)
                         .try_join();
+                    let build_file_subscriptions = async {
+                        build_files_changed(
+                            self.cwd.clone(),
+                            build_file_paths,
+                            *self.context_source_for_issue,
+                        )
+                        .await?;
+                        Ok::<_, anyhow::Error>(())
+                    };
                     let directory_subscriptions = directories
                         .iter()
-                        .map(|(dir, glob)| async move {
+                        .map(async |(dir, glob)| {
                             self.cwd
                                 .join(dir)?
                                 .track_glob(Glob::new(glob.clone(), GlobOptions::default()), false)
@@ -635,18 +683,9 @@ impl EvaluateContext for WebpackLoaderContext {
                     try_join!(
                         env_subscriptions,
                         file_subscriptions,
+                        build_file_subscriptions,
                         directory_subscriptions
                     )?;
-
-                    for build_path in build_file_paths {
-                        let build_path = self.cwd.join(&build_path)?;
-                        BuildDependencyIssue {
-                            source: IssueSource::from_source_only(self.context_source_for_issue),
-                            path: build_path,
-                        }
-                        .resolved_cell()
-                        .emit();
-                    }
                 }
             }
             InfoMessage::EmittedError { error, severity } => {
@@ -752,7 +791,10 @@ impl EvaluateContext for WebpackLoaderContext {
                 // Build a module graph from the resolved module and its
                 // transitive dependencies
                 let single_graph = SingleModuleGraph::new_with_entry(
-                    ChunkGroupEntry::Entry(vec![module]),
+                    ChunkGroupEntry::Entry {
+                        modules: vec![module],
+                        heuristics: EntryHeuristics::default(),
+                    },
                     false,
                     false,
                 );
@@ -762,8 +804,16 @@ impl EvaluateContext for WebpackLoaderContext {
                     .await?;
 
                 // Generate a full Node.js bundle using the real runtime
-                let output_root = self.chunking_context.output_root().owned().await?;
-                let entry_path = output_root.join("importModule.js")?;
+                let entry_path = self
+                    .chunking_context
+                    .chunk_path(
+                        None,
+                        module.ident(),
+                        Some(rcstr!("importModule")),
+                        rcstr!(".js"),
+                    )
+                    .owned()
+                    .await?;
 
                 let bootstrap = self.chunking_context.root_entry_chunk_group_asset(
                     entry_path.clone(),
@@ -780,6 +830,7 @@ impl EvaluateContext for WebpackLoaderContext {
                     true,
                 )
                 .await?;
+                let output_root = self.chunking_context.output_root().owned().await?;
 
                 let mut chunks = Vec::new();
                 for asset in all_assets {
@@ -973,7 +1024,7 @@ impl Issue for BuildDependencyIssue {
 
     async fn title(&self) -> Result<StyledString> {
         Ok(StyledString::Text(rcstr!(
-            "Build dependencies are not yet supported"
+            "Unsupported webpack loader build dependency"
         )))
     }
 
@@ -987,12 +1038,12 @@ impl Issue for BuildDependencyIssue {
 
     async fn description(&self) -> Result<Option<StyledString>> {
         Ok(Some(StyledString::Line(vec![
-            StyledString::Text(rcstr!("The file at ")),
+            StyledString::Text(rcstr!("The path at ")),
             StyledString::Code(self.path.to_string().into()),
             StyledString::Text(
-                " is a build dependency, which is not yet implemented.
-    Changing this file or any dependency will not be recognized and might require restarting the \
-                 server"
+                " was passed to this.addBuildDependency, but it is not an exact existing file. \
+                 Only exact existing file paths are supported; other inputs may require \
+                 restarting the development server."
                     .into(),
             ),
         ])))

@@ -16,6 +16,7 @@ import {
 } from '../server/lib/utils'
 import * as Log from '../build/output/log'
 import { getProjectDir } from '../lib/get-project-dir'
+import { ensureProfilesDir } from '../lib/profiles-dir'
 import path from 'path'
 import { traceGlobals } from '../trace/shared'
 import { Telemetry } from '../telemetry/storage'
@@ -101,6 +102,8 @@ const CHILD_EXIT_TIMEOUT_MS = parseInt(
   process.env.NEXT_EXIT_TIMEOUT_MS ?? '100',
   10
 )
+const shouldWaitForChildExit =
+  process.env.NEXT_DEV_WAIT_FOR_TURBOPACK_SHUTDOWN === '1'
 
 const handleSessionStop = async (signal: NodeJS.Signals | number | null) => {
   if (signal != null && child?.pid) child.kill(signal)
@@ -117,11 +120,14 @@ const handleSessionStop = async (signal: NodeJS.Signals | number | null) => {
     child.exitCode === null &&
     child.signalCode === null
   ) {
-    let exitTimeout = setTimeout(() => {
-      child?.kill('SIGKILL')
-    }, CHILD_EXIT_TIMEOUT_MS)
+    let exitTimeout: NodeJS.Timeout | undefined
+    if (!shouldWaitForChildExit) {
+      exitTimeout = setTimeout(() => {
+        child?.kill('SIGKILL')
+      }, CHILD_EXIT_TIMEOUT_MS)
+    }
     await once(child, 'exit').catch(() => {})
-    clearTimeout(exitTimeout)
+    if (exitTimeout) clearTimeout(exitTimeout)
   }
 
   sessionSpan.stop()
@@ -416,7 +422,7 @@ const nextDev = async (
           ...(options.experimentalCpuProf
             ? {
                 NEXT_CPU_PROF: '1',
-                NEXT_CPU_PROF_DIR: path.join(dir, '.next-profiles'),
+                NEXT_CPU_PROF_DIR: ensureProfilesDir(dir),
                 __NEXT_PRIVATE_CPU_PROFILE: 'dev-server',
               }
             : undefined),

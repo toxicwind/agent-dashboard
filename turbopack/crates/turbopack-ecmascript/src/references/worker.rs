@@ -1,8 +1,8 @@
 use anyhow::Result;
 use bincode::{Decode, Encode};
 use swc_core::{
-    common::util::take::Take,
-    ecma::ast::{CallExpr, Callee, Expr, ExprOrSpread, Lit},
+    common::{DUMMY_SP, util::take::Take},
+    ecma::ast::{ArrayLit, CallExpr, Callee, Expr, ExprOrSpread, Lit, Null},
     quote_expr,
 };
 use turbo_rcstr::{RcStr, rcstr};
@@ -26,12 +26,10 @@ use turbopack_core::{
 };
 
 use crate::{
+    ast_path_trie::{AstPathId, AstPathTrie, AstPathTrieBuilder},
     code_gen::{CodeGen, CodeGeneration, IntoCodeGenReference},
     create_visitor,
-    references::{
-        AstPath,
-        pattern_mapping::{PatternMapping, ResolveType},
-    },
+    references::pattern_mapping::{PatternMapping, ResolveType},
     worker_chunk::{WorkerType, module::WorkerLoaderModule},
 };
 
@@ -116,7 +114,8 @@ impl WorkerAssetReference {
 impl ModuleReference for WorkerAssetReference {
     #[turbo_tasks::function]
     async fn resolve_reference(&self) -> Result<Vc<ModuleResolveResult>> {
-        let asset_context = self.origin.asset_context().to_resolved().await?;
+        let origin = self.origin.into_trait_ref().await?;
+        let asset_context = origin.asset_context();
 
         let result = match (&self.worker_type, &self.request) {
             (WorkerType::WebWorker | WorkerType::SharedWebWorker, WorkerRequest::Url(request)) => {
@@ -151,9 +150,9 @@ impl ModuleReference for WorkerAssetReference {
                 handle_resolve_error(
                     result,
                     reference_type.clone(),
-                    *self.origin,
+                    origin.origin_path(),
                     Request::parse(path.owned().await?),
-                    self.origin.resolve_options(),
+                    origin.resolve_options(),
                     self.error_mode,
                     Some(self.issue_source),
                 )
@@ -195,7 +194,7 @@ impl ModuleReference for WorkerAssetReference {
                                 .await?,
                             )
                             .resolved_cell(),
-                            path: self.origin.origin_path().owned().await?,
+                            path: origin.origin_path(),
                             source: Some(self.issue_source),
                         }
                         .resolved_cell()
@@ -224,7 +223,7 @@ impl ModuleReference for WorkerAssetReference {
                                 .await?,
                             )
                             .resolved_cell(),
-                            path: self.origin.origin_path().owned().await?,
+                            path: origin.origin_path(),
                             source: Some(self.issue_source),
                         }
                         .resolved_cell()
@@ -262,6 +261,10 @@ impl ModuleReference for WorkerAssetReference {
             hoisted: false,
         })
     }
+
+    fn source(&self) -> Option<IssueSource> {
+        Some(self.issue_source)
+    }
 }
 
 impl WorkerAssetReference {
@@ -269,7 +272,13 @@ impl WorkerAssetReference {
     async fn get_module_type_issue_severity(&self) -> Result<IssueSeverity> {
         Ok(
             if self.error_mode != ResolveErrorMode::Error
-                || self.origin.resolve_options().await?.loose_errors
+                || self
+                    .origin
+                    .into_trait_ref()
+                    .await?
+                    .resolve_options()
+                    .await?
+                    .loose_errors
             {
                 IssueSeverity::Warning
             } else {
@@ -297,9 +306,14 @@ impl ValueToString for WorkerAssetReference {
 }
 
 impl IntoCodeGenReference for WorkerAssetReference {
+    fn into_reference(self) -> ResolvedVc<Box<dyn ModuleReference>> {
+        ResolvedVc::upcast(self.resolved_cell())
+    }
+
     fn into_code_gen_reference(
         self,
-        path: AstPath,
+        _trie: &AstPathTrieBuilder,
+        path: AstPathId,
     ) -> (ResolvedVc<Box<dyn ModuleReference>>, CodeGen) {
         let reference = self.resolved_cell();
         (
@@ -314,20 +328,21 @@ impl IntoCodeGenReference for WorkerAssetReference {
 )]
 pub struct WorkerAssetReferenceCodeGen {
     reference: ResolvedVc<WorkerAssetReference>,
-    path: AstPath,
+    path: AstPathId,
 }
 
 impl WorkerAssetReferenceCodeGen {
     pub async fn code_generation(
         &self,
+        trie: &AstPathTrie,
         chunking_context: Vc<Box<dyn ChunkingContext>>,
     ) -> Result<CodeGeneration> {
         let reference = self.reference.await?;
 
         // Build the request for PatternMapping
-        let request = match &reference.request {
-            WorkerRequest::Url(request) => **request,
-            WorkerRequest::Pattern { path, .. } => Request::parse(path.owned().await?),
+        let (request, request_key) = match &reference.request {
+            WorkerRequest::Url(request) => (**request, request.await?.request()),
+            WorkerRequest::Pattern { path, .. } => (Request::parse(path.owned().await?), None),
         };
 
         // Use PatternMapping to handle both single and multiple (dynamic) worker results
@@ -337,13 +352,14 @@ impl WorkerAssetReferenceCodeGen {
             chunking_context,
             self.reference.resolve_reference(),
             ResolveType::ChunkItem,
+            None,
         )
         .await?;
 
         // Transform `new Worker(url, opts)` into `require(id)(Worker, opts)`
         // The loader module exports a function that creates the worker with all necessary
         // configuration (entrypoint, chunks, forwarded globals, etc.)
-        let visitor = create_visitor!(self.path, visit_mut_expr, |expr: &mut Expr| {
+        let visitor = create_visitor!(trie, self.path, visit_mut_expr, |expr: &mut Expr| {
             let message = if let Expr::New(new_expr) = expr {
                 if let Some(args) = &mut new_expr.args {
                     match args.first_mut() {
@@ -354,8 +370,14 @@ impl WorkerAssetReferenceCodeGen {
                             // Get the Worker constructor (callee)
                             let constructor = new_expr.callee.take();
 
-                            // Build the require call for the loader module
-                            let require_call = pm.create_require(*url_expr.take());
+                            // URL references are rewritten before their enclosing Worker
+                            // expression. Use the analyzed request string for the context lookup
+                            // instead of the rewritten URL object.
+                            let key_expr = match &request_key {
+                                Some(request) => Expr::Lit(Lit::Str(request.as_str().into())),
+                                None => *url_expr.take(),
+                            };
+                            let require_call = pm.create_require(key_expr);
 
                             // Build the arguments: (WorkerConstructor, ...rest_args)
                             let mut call_args = vec![ExprOrSpread {
@@ -394,5 +416,64 @@ impl WorkerAssetReferenceCodeGen {
         });
 
         Ok(CodeGeneration::visitors(vec![visitor]))
+    }
+}
+
+#[derive(
+    PartialEq, Eq, TraceRawVcs, ValueDebugFormat, NonLocalValue, Debug, Hash, Encode, Decode,
+)]
+pub enum WorkerGlobalPlaceholder {
+    /// `const _TURBOPACK_WORKER_FORWARDED_GLOBALS_ = []`
+    ForwardedGlobals,
+    /// `const _TURBOPACK_WORKER_BASE_PATH_ = '_TURBOPACK_WORKER_BASE_PATH_REPLACE_'`
+    BasePath,
+}
+
+#[derive(
+    PartialEq, Eq, TraceRawVcs, ValueDebugFormat, NonLocalValue, Debug, Hash, Encode, Decode,
+)]
+pub struct WorkerGlobalsReplacementCodeGen {
+    /// Which placeholder this codegen replaces (determines the injected value).
+    placeholder: WorkerGlobalPlaceholder,
+    path: AstPathId,
+}
+
+impl WorkerGlobalsReplacementCodeGen {
+    pub fn new(placeholder: WorkerGlobalPlaceholder, path: AstPathId) -> Self {
+        WorkerGlobalsReplacementCodeGen { placeholder, path }
+    }
+
+    pub async fn code_generation(
+        &self,
+        trie: &AstPathTrie,
+        chunking_context: Vc<Box<dyn ChunkingContext>>,
+    ) -> Result<CodeGeneration> {
+        let options = chunking_context.worker_configuration_options().await?;
+        let value: Expr = match self.placeholder {
+            WorkerGlobalPlaceholder::ForwardedGlobals => Expr::Array(ArrayLit {
+                span: DUMMY_SP,
+                elems: options
+                    .forwarded_globals
+                    .iter()
+                    .map(|global| Some(Expr::Lit(Lit::Str(global.as_str().into())).into()))
+                    .collect(),
+            }),
+            WorkerGlobalPlaceholder::BasePath => match &options.asset_prefix {
+                Some(asset_prefix) => Expr::Lit(Lit::Str(asset_prefix.as_str().into())),
+                None => Expr::Lit(Lit::Null(Null { span: DUMMY_SP })),
+            },
+        };
+
+        let visitor = create_visitor!(trie, self.path, visit_mut_expr, |expr: &mut Expr| {
+            *expr = value.clone();
+        });
+
+        Ok(CodeGeneration::visitors(vec![visitor]))
+    }
+}
+
+impl From<WorkerGlobalsReplacementCodeGen> for CodeGen {
+    fn from(val: WorkerGlobalsReplacementCodeGen) -> Self {
+        CodeGen::WorkerGlobalsReplacementCodeGen(val)
     }
 }

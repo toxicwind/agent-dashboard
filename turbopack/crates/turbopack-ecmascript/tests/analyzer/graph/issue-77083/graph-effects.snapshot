@@ -37,7 +37,7 @@
                             Function(
                                 Body,
                             ),
-                            BlockStmt(
+                            FunctionBody(
                                 Stmts(
                                     0,
                                 ),
@@ -84,6 +84,12 @@
                                 ModuleValue {
                                     module: "./assert",
                                     annotations: None,
+                                    analyze_for_constants: false,
+                                    reference: Some(
+                                        ModuleReferenceIndex(
+                                            2,
+                                        ),
+                                    ),
                                 },
                             ),
                             Constant(
@@ -99,9 +105,7 @@
                                 Constant(
                                     Num(
                                         ConstantNumber(
-                                            TotalOrderF64(
-                                                1.0,
-                                            ),
+                                            1.0,
                                         ),
                                     ),
                                 ),
@@ -110,9 +114,7 @@
                                 Constant(
                                     Num(
                                         ConstantNumber(
-                                            TotalOrderF64(
-                                                1.0,
-                                            ),
+                                            1.0,
                                         ),
                                     ),
                                 ),
@@ -142,7 +144,7 @@
                             Function(
                                 Body,
                             ),
-                            BlockStmt(
+                            FunctionBody(
                                 Stmts(
                                     0,
                                 ),
@@ -200,7 +202,7 @@
                             Function(
                                 Body,
                             ),
-                            BlockStmt(
+                            FunctionBody(
                                 Stmts(
                                     0,
                                 ),
@@ -226,42 +228,9 @@
                     },
                 ],
                 range: Exact(
-                    [
-                        Program(
-                            Module,
-                        ),
-                        Module(
-                            Body(
-                                1,
-                            ),
-                        ),
-                        ModuleItem(
-                            Stmt,
-                        ),
-                        Stmt(
-                            Decl,
-                        ),
-                        Decl(
-                            Fn,
-                        ),
-                        FnDecl(
-                            Function,
-                        ),
-                        Function(
-                            Body,
-                        ),
-                        BlockStmt(
-                            Stmts(
-                                0,
-                            ),
-                        ),
-                        Stmt(
-                            Labeled,
-                        ),
-                        LabeledStmt(
-                            Body,
-                        ),
-                    ],
+                    AstPathId(
+                        13,
+                    ),
                 ),
             },
         },
@@ -289,7 +258,7 @@
             Function(
                 Body,
             ),
-            BlockStmt(
+            FunctionBody(
                 Stmts(
                     0,
                 ),
@@ -329,7 +298,7 @@
             Function(
                 Body,
             ),
-            BlockStmt(
+            FunctionBody(
                 Stmts(
                     1,
                 ),
@@ -370,6 +339,12 @@
                 ModuleValue {
                     module: "./assert",
                     annotations: None,
+                    analyze_for_constants: false,
+                    reference: Some(
+                        ModuleReferenceIndex(
+                            2,
+                        ),
+                    ),
                 },
             ),
             Constant(
@@ -385,9 +360,7 @@
                 Constant(
                     Num(
                         ConstantNumber(
-                            TotalOrderF64(
-                                2.0,
-                            ),
+                            2.0,
                         ),
                     ),
                 ),
@@ -396,9 +369,7 @@
                 Constant(
                     Num(
                         ConstantNumber(
-                            TotalOrderF64(
-                                2.0,
-                            ),
+                            2.0,
                         ),
                     ),
                 ),
@@ -428,7 +399,7 @@
             Function(
                 Body,
             ),
-            BlockStmt(
+            FunctionBody(
                 Stmts(
                     1,
                 ),
@@ -484,7 +455,7 @@
             Function(
                 Body,
             ),
-            BlockStmt(
+            FunctionBody(
                 Stmts(
                     2,
                 ),
@@ -517,6 +488,12 @@
                 ModuleValue {
                     module: "./assert",
                     annotations: None,
+                    analyze_for_constants: false,
+                    reference: Some(
+                        ModuleReferenceIndex(
+                            2,
+                        ),
+                    ),
                 },
             ),
             Constant(
@@ -532,9 +509,7 @@
                 Constant(
                     Num(
                         ConstantNumber(
-                            TotalOrderF64(
-                                3.0,
-                            ),
+                            3.0,
                         ),
                     ),
                 ),
@@ -543,9 +518,7 @@
                 Constant(
                     Num(
                         ConstantNumber(
-                            TotalOrderF64(
-                                3.0,
-                            ),
+                            3.0,
                         ),
                     ),
                 ),
@@ -575,7 +548,7 @@
             Function(
                 Body,
             ),
-            BlockStmt(
+            FunctionBody(
                 Stmts(
                     2,
                 ),
@@ -619,7 +592,7 @@
             Function(
                 Body,
             ),
-            BlockStmt(
+            FunctionBody(
                 Stmts(
                     3,
                 ),

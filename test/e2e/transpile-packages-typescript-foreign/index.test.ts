@@ -23,7 +23,7 @@ describe('transpile-packages-typescript-foreign', () => {
 
       if (process.env.IS_TURBOPACK_TEST) {
         expect(next.cliOutput).toContain(`pkg/index.ts
-Unknown module type
+Error: Unknown module type
 This module doesn't have an associated type`)
         expect(
           next.cliOutput.match(/Unknown module type/g).length
@@ -39,9 +39,8 @@ Module parse failed: Unexpected token`)
   })
 
   describe('with transpilePackages', () => {
-    const { next, skipped } = nextTestSetup({
+    const { next } = nextTestSetup({
       files: __dirname,
-      skipDeployment: true,
       dependencies: {
         pkg: `file:./pkg`,
       },
@@ -49,10 +48,6 @@ Module parse failed: Unexpected token`)
         transpilePackages: ['pkg'],
       },
     })
-
-    if (skipped) {
-      return
-    }
 
     it('should work', async () => {
       const $ = await next.render$('/')

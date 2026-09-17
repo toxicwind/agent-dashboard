@@ -2,9 +2,11 @@ use std::fmt::Display;
 
 use anyhow::Result;
 use bincode::{Decode, Encode};
+use itertools::Itertools;
+use next_core::app_structure::FileSystemPathVec;
 use turbo_rcstr::RcStr;
 use turbo_tasks::{
-    Completion, FxIndexMap, FxIndexSet, NonLocalValue, OperationVc, ResolvedVc, TryFlatJoinIterExt,
+    Completion, FxIndexMap, FxIndexSet, JoinIterExt, NonLocalValue, OperationVc, ResolvedVc,
     TryJoinIterExt, Vc, debug::ValueDebugFormat, trace::TraceRawVcs,
 };
 use turbopack_core::{
@@ -20,7 +22,7 @@ use crate::{operation::OptionEndpoint, paths::AssetPath, project::Project};
 pub struct AppPageRoute {
     pub original_name: RcStr,
     pub html_endpoint: ResolvedVc<Box<dyn Endpoint>>,
-    pub rsc_endpoint: ResolvedVc<Box<dyn Endpoint>>,
+    pub rsc_hmr_endpoint: ResolvedVc<Box<dyn Endpoint>>,
 }
 
 #[turbo_tasks::value(shared)]
@@ -37,6 +39,7 @@ pub enum Route {
     AppRoute {
         original_name: RcStr,
         endpoint: ResolvedVc<Box<dyn Endpoint>>,
+        has_action_manifest: bool,
     },
     Conflict,
 }
@@ -67,6 +70,12 @@ pub trait Endpoint {
     /// The project this endpoint belongs to.
     #[turbo_tasks::function]
     fn project(self: Vc<Self>) -> Vc<Project>;
+
+    /// The traced files included by this endpoint. This is only used for analysis purposes.
+    /// Usually, `output()` includes the NFT file and everything else is handled outside of
+    /// Turbopack.
+    #[turbo_tasks::function]
+    fn traced_files(self: Vc<Self>) -> Vc<FileSystemPathVec>;
 }
 
 #[derive(
@@ -154,6 +163,15 @@ impl EndpointGroup {
                 .collect(),
         )
     }
+
+    pub fn traced_files(&self) -> Vc<FileSystemPathVec> {
+        traced_files_of_endpoints(
+            self.primary
+                .iter()
+                .map(|endpoint| *endpoint.endpoint)
+                .collect(),
+        )
+    }
 }
 
 #[turbo_tasks::function]
@@ -170,17 +188,29 @@ async fn output_of_endpoints(endpoints: Vec<Vc<Box<dyn Endpoint>>>) -> Result<Vc
 async fn module_graphs_of_endpoints(
     endpoints: Vec<Vc<Box<dyn Endpoint>>>,
 ) -> Result<Vc<ModuleGraphs>> {
+    // Deduplicate while preserving first-seen order, then hand back a `Vec`.
     let module_graphs = endpoints
         .iter()
-        .map(async |endpoint| Ok(endpoint.module_graphs().await?.into_iter()))
-        .try_flat_join()
-        .await?
+        .map(async |endpoint| anyhow::Ok(endpoint.module_graphs().await?.into_iter()))
+        .join()
+        .await
         .into_iter()
-        .copied()
-        .collect::<FxIndexSet<_>>()
+        .flatten_ok()
+        .collect::<Result<FxIndexSet<_>>>()?
         .into_iter()
         .collect::<Vec<_>>();
     Ok(Vc::cell(module_graphs))
+}
+
+#[turbo_tasks::function]
+async fn traced_files_of_endpoints(
+    endpoints: Vec<Vc<Box<dyn Endpoint>>>,
+) -> Result<Vc<FileSystemPathVec>> {
+    let mut modules: FxIndexSet<_> = FxIndexSet::default();
+    for endpoint in endpoints {
+        modules.extend(endpoint.traced_files().await?.iter().cloned());
+    }
+    Ok(Vc::cell(modules.into_iter().collect()))
 }
 
 #[turbo_tasks::value(transparent)]
@@ -267,6 +297,7 @@ pub enum EndpointOutputPaths {
     NodeJs {
         /// Relative to the root_path
         server_entry_path: RcStr,
+        server_hmr_entry_paths: Vec<RcStr>,
         server_paths: Vec<AssetPath>,
         client_paths: Vec<RcStr>,
     },
