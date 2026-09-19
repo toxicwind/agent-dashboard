@@ -22,9 +22,19 @@ jobs:
       - name: Fetch latest react@experimental version
         id: current
         run: |
-          CURRENT=$(npm --silent view --json react@experimental version | tr -d '"')
+          # npm registry lookups can flake (transient network/registry errors);
+          # retry with backoff instead of failing the whole scheduled run.
+          CURRENT=""
+          for attempt in 1 2 3; do
+            CURRENT=$(npm --silent view --json react@experimental version 2>/dev/null | tr -d '"')
+            if [ -n "$CURRENT" ]; then
+              break
+            fi
+            echo "npm view react@experimental attempt $attempt failed, retrying..." >&2
+            sleep $((attempt * 10))
+          done
           if [ -z "$CURRENT" ]; then
-            echo "Failed to resolve react@experimental version" >&2
+            echo "Failed to resolve react@experimental version after 3 attempts" >&2
             exit 1
           fi
           echo "version=$CURRENT" >> "$GITHUB_OUTPUT"
@@ -49,9 +59,18 @@ jobs:
         id: canary
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          CANARY=$(npm --silent view --json react@canary version | tr -d '"')
+          # Same retry hardening as the experimental lookup above.
+          CANARY=""
+          for attempt in 1 2 3; do
+            CANARY=$(npm --silent view --json react@canary version 2>/dev/null | tr -d '"')
+            if [ -n "$CANARY" ]; then
+              break
+            fi
+            echo "npm view react@canary attempt $attempt failed, retrying..." >&2
+            sleep $((attempt * 10))
+          done
           if [ -z "$CANARY" ]; then
-            echo "Failed to resolve react@canary version" >&2
+            echo "Failed to resolve react@canary version after 3 attempts" >&2
             exit 1
           fi
           echo "version=$CANARY" >> "$GITHUB_OUTPUT"
