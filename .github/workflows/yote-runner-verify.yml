@@ -1,0 +1,20 @@
+name: yote-runner-verify
+on:
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: [self-hosted, yote]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: canary
+      - name: system probe
+        run: |
+          echo "RUNNER-VERIFY-OK"
+          uname -a
+          nproc
+          free -g | head -2
+          python3 -c "import ssl, json; print('py-ssl ok')"
+          ls .github/workflows/
+      - name: compute check
+        run: python3 -c "print(sum(i*i for i in range(10**6)))"
