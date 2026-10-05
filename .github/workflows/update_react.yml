@@ -46,7 +46,9 @@ jobs:
 
       - name: Resolve release credentials
         id: release-creds
-        # gh is pre-authenticated in Actions; no token is passed explicitly.
+        env:
+          # gh authenticates via this standard env var.
+          GH_TOKEN: ${{ github.token }}
         run: |
           if [ -n "${{ steps.release-app-token.outputs.token }}" ]; then
             echo "token=${{ steps.release-app-token.outputs.token }}" >> "$GITHUB_OUTPUT"
