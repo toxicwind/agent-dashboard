@@ -43,21 +43,30 @@ jobs:
           permission-contents: write
           permission-pull-requests: write
 
-      - name: Get GitHub App user ID
-        id: release-app-user
-        if: steps.release-app-token.outputs.token != ''
+      - name: Resolve release credentials
+        id: release-creds
+        # gh is pre-authenticated in Actions; no token is passed explicitly.
         run: |
-          user_id="$(gh api "/users/${{ steps.release-app-token.outputs.app-slug }}[bot]" --jq .id)"
-          echo "user-id=$user_id" >> "$GITHUB_OUTPUT"
-        env:
-          GH_TOKEN: ${{ steps.release-app-token.outputs.token }}
+          if [ -n "${{ steps.release-app-token.outputs.token }}" ]; then
+            echo "token=${{ steps.release-app-token.outputs.token }}" >> "$GITHUB_OUTPUT"
+            SLUG="${{ steps.release-app-token.outputs.app-slug }}"
+            LOOKUP="$SLUG[bot]"
+          else
+            # No app credentials on this repo; fall back to the built-in token
+            # and the triggering actor's identity.
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> "$GITHUB_OUTPUT"
+            SLUG="$(gh api user --jq .login)"
+            LOOKUP="$SLUG"
+          fi
+          echo "slug=$SLUG" >> "$GITHUB_OUTPUT"
+          echo "user-id=$(gh api "/users/$LOOKUP" --jq .id)" >> "$GITHUB_OUTPUT"
 
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           # Commits made with the default `GITHUB_TOKEN` won't trigger workflows.
           # See: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
-          token: ${{ steps.release-app-token.outputs.token || github.token }}
+          token: ${{ steps.release-creds.outputs.token }}
           persist-credentials: false
 
       - name: Setup node
@@ -83,10 +92,10 @@ jobs:
         env:
           # Only used to authenticate the facebook/react compare API request
           # that builds the changelog, so it doesn't hit anonymous rate limits.
-          # The commits, branch, and Pull Request use the release token below:
-          # the release app token when its credentials exist, otherwise the
-          # built-in token as a fallback.
+          # Release credentials come from the "Resolve release credentials" step:
+          # the release app when its credentials exist, otherwise the built-in
+          # token with the triggering actor's identity.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_GITHUB_TOKEN: ${{ steps.release-app-token.outputs.token || secrets.GITHUB_TOKEN }}
-          RELEASE_GITHUB_APP_SLUG: ${{ steps.release-app-token.outputs.app-slug }}
-          RELEASE_GITHUB_APP_USER_ID: ${{ steps.release-app-user.outputs.user-id }}
+          RELEASE_GITHUB_TOKEN: ${{ steps.release-creds.outputs.token }}
+          RELEASE_GITHUB_APP_SLUG: ${{ steps.release-creds.outputs.slug }}
+          RELEASE_GITHUB_APP_USER_ID: ${{ steps.release-creds.outputs.user-id }}
