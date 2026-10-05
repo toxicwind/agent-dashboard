@@ -1,11 +1,11 @@
 name: Update React
 
 on:
-  # Schedule disabled on this fork: the workflow needs the release GitHub App
-  # credentials, which do not exist on this repo. Upstream keeps the cron;
-  # this fork runs it manually only.
-  # schedule:
-  #   - cron: 40 16 * * 1,2,3,4,5
+  schedule:
+    # At 40 minutes past 16:00 on Mon, Tue, Wed, Thu, and Fri
+    # i.e. 30min past React nightlies: https://github.com/facebook/react/blob/941e1b4a0a81ca3d5f2ac6ef35682e2f8e96dae1/.github/workflows/runtime_prereleases_nightly.yml#L6
+    # TODO: automatically trigger on React release
+    - cron: 40 16 * * 1,2,3,4,5
   # Allow manual runs
   workflow_dispatch:
     inputs:
@@ -23,10 +23,17 @@ jobs:
       # The built-in token is only used to read the facebook/react compare API
       # for the changelog. Everything that writes to this repository
       # authenticates as the release app instead.
-      contents: read
+      # Forks without the release app credentials fall back to the built-in
+      # token for writes, so it needs write permissions here. On upstream the
+      # extra permission is unused (the app token does the writes).
+      contents: write
+      pull-requests: write
     steps:
       - name: Create GitHub App token
         id: release-app-token
+        # Forks don't have the release app credentials; skip and fall back
+        # to the built-in token for checkout and PR creation below.
+        if: secrets.RELEASE_GITHUB_APP_PRIVATE_KEY != ''
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           client-id: ${{ vars.RELEASE_GITHUB_APP_CLIENT_ID }}
@@ -38,6 +45,7 @@ jobs:
 
       - name: Get GitHub App user ID
         id: release-app-user
+        if: steps.release-app-token.outputs.token != ''
         run: |
           user_id="$(gh api "/users/${{ steps.release-app-token.outputs.app-slug }}[bot]" --jq .id)"
           echo "user-id=$user_id" >> "$GITHUB_OUTPUT"
@@ -49,7 +57,7 @@ jobs:
         with:
           # Commits made with the default `GITHUB_TOKEN` won't trigger workflows.
           # See: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
-          token: ${{ steps.release-app-token.outputs.token }}
+          token: ${{ steps.release-app-token.outputs.token || github.token }}
           persist-credentials: false
 
       - name: Setup node
@@ -75,8 +83,10 @@ jobs:
         env:
           # Only used to authenticate the facebook/react compare API request
           # that builds the changelog, so it doesn't hit anonymous rate limits.
-          # The commits, branch, and Pull Request all use the app token below.
+          # The commits, branch, and Pull Request use the release token below:
+          # the release app token when its credentials exist, otherwise the
+          # built-in token as a fallback.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_GITHUB_TOKEN: ${{ steps.release-app-token.outputs.token }}
+          RELEASE_GITHUB_TOKEN: ${{ steps.release-app-token.outputs.token || secrets.GITHUB_TOKEN }}
           RELEASE_GITHUB_APP_SLUG: ${{ steps.release-app-token.outputs.app-slug }}
           RELEASE_GITHUB_APP_USER_ID: ${{ steps.release-app-user.outputs.user-id }}
