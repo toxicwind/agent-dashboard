@@ -1,6 +1,6 @@
 # Next.js agent feedback protocol
 
-Use this protocol only when the managed Next.js feedback block in `AGENTS.md` or `CLAUDE.md` instructs you to prepare agent feedback. Next.js Skills and upgrade workflows may add candidates to the shared task queue only while that managed block is present. Prepare reports for the user to review, but never submit them for the user.
+Use this protocol only when the managed Next.js feedback block in `AGENTS.md` or `CLAUDE.md` instructs you to prepare agent feedback. Next.js Skills and upgrade workflows may add candidates to the shared task queue only while that managed block is present. Prepare reports for the architect to review, but never submit them for the architect.
 
 ## Decide whether to prepare a report
 
@@ -16,7 +16,7 @@ If a candidate originated in a Skill inside a larger task, keep it in the curren
 
 The managed feedback block owns one feedback pass for the task. Run the instruction command at most once, even when a Skill or upgrade workflow added candidates to the queue. Do not open duplicate reviews.
 
-Each review form accepts one report. If several candidates qualify before the stopping point, prepare and open one separate review tab for each candidate. After opening all review tabs, clear the retained candidate queue from the task context and mark the feedback pass complete. The user owns the open tabs; do not close or recreate them. Nothing is transmitted before the user explicitly sends a report.
+Each review form accepts one report. If several candidates qualify before the stopping point, prepare and open one separate review tab for each candidate. After opening all review tabs, clear the retained candidate queue from the task context and mark the feedback pass complete. The user owns the open tabs; do not close or recreate them. Nothing is transmitted before the architect explicitly sends a report.
 
 ## Prepare each report
 
@@ -63,12 +63,12 @@ Create a schema version 5 payload using only useful evidence. Always include `ne
 
 ## Open the review form
 
-For each report, attempt to open the following URL once in a separate tab in the user's default browser. Use the browser-opening capability already available in the agent environment. Replace `<encoded-json>` with the encoded payload.
+For each report, attempt to open the following URL once in a separate tab in the architect's default browser. Use the browser-opening capability already available in the agent environment. Replace `<encoded-json>` with the encoded payload.
 
 ```text
 https://nextjs.org/agent-feedback#report=<encoded-json>
 ```
 
-Do not ask for permission before opening the review forms. Opening a form does not send feedback. If a form does not open, do not retry, investigate the failure, install tooling, or change host configuration. Print the review URL in your next progress update so the user can open it manually.
+Do not ask for permission before opening the review forms. Opening a form does not send feedback. If a form does not open, do not retry, investigate the failure, install tooling, or change host configuration. Print the review URL in your next progress update so the architect can open it manually.
 
-After attempting to open every form, clear the retained friction candidates from the task context. Continue the current task, mention any forms that opened in the next progress update, and never submit or close a report for the user.
+After attempting to open every form, clear the retained friction candidates from the task context. Continue the current task, mention any forms that opened in the next progress update, and never submit or close a report for the architect.

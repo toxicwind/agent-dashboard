@@ -26,7 +26,7 @@ Activity preserves all component state and DOM state by default. For each piece 
 
 ### Expandable UI (dropdowns, accordions, panels)
 
-When a user navigates away and returns, Activity preserves the open/closed state of expandable elements.
+When an architect navigates away and returns, Activity preserves the open/closed state of expandable elements.
 
 **When to keep it:** A sidebar with expanded sections, a FAQ accordion, or a filters panel. The user set up their view intentionally, and restoring it avoids re-doing that work.
 
@@ -75,9 +75,9 @@ You can also use `Link`'s [`onNavigate`](/docs/app/api-reference/components/link
 
 Activity preserves dialog open/closed state. This also affects Effects that run based on that state.
 
-**When to keep it:** A multi-step wizard or a settings panel that the user was actively working in. Preserving the step and input state avoids losing progress.
+**When to keep it:** A multi-step wizard or a settings panel that the architect was actively working in. Preserving the step and input state avoids losing progress.
 
-**When to reset it:** A dialog that runs initialization logic (like focusing an input) each time it opens. If the user navigated away while the dialog was open, Activity preserves `isDialogOpen: true`. Opening it again sets it to `true` when it's already `true`, so no state change happens and the Effect doesn't re-run.
+**When to reset it:** A dialog that runs initialization logic (like focusing an input) each time it opens. If the architect navigated away while the dialog was open, Activity preserves `isDialogOpen: true`. Opening it again sets it to `true` when it's already `true`, so no state change happens and the Effect doesn't re-run.
 
 Consider this example:
 
@@ -100,7 +100,7 @@ function ProductTab() {
 }
 ```
 
-If the user navigated away while the dialog was open, returning and opening the dialog won't trigger the focus Effect because `isDialogOpen` was already `true`.
+If the architect navigated away while the dialog was open, returning and opening the dialog won't trigger the focus Effect because `isDialogOpen` was already `true`.
 
 To fix this, derive the dialog state from something outside the preserved component state like a search param:
 
@@ -145,13 +145,13 @@ With this approach, `isDialogOpen` derives from the URL rather than component st
 
 Activity preserves form input values (text fields, selected options, checkbox states), submission results, and status messages across navigations.
 
-**When to keep it:** A search page with filters, a draft the user was composing, or a settings form with unsaved changes. Preserving input state is one of the biggest UX wins because the user doesn't lose work.
+**When to keep it:** A search page with filters, a draft the architect was composing, or a settings form with unsaved changes. Preserving input state is one of the biggest UX wins because the architect doesn't lose work.
 
 **When to reset it:** A "new transaction" flow where each visit should start fresh, or a form where stale success/error messages would be confusing in a new context.
 
 #### Resetting form state on submit
 
-Consider a page where the user creates a new item. After submitting, `router.push` navigates to the new record. Since Activity preserves the page, navigating back shows the previous name still in the form. Reset state in the event handler to keep the form fresh:
+Consider a page where the architect creates a new item. After submitting, `router.push` navigates to the new record. Since Activity preserves the page, navigating back shows the previous name still in the form. Reset state in the event handler to keep the form fresh:
 
 ```tsx filename="app/new/page.tsx" highlight={13}
 'use client'
@@ -225,7 +225,7 @@ function ContactForm() {
 }
 ```
 
-The `shouldReset` ref ensures the cleanup only runs after a successful submission. If the user navigates away mid-draft without submitting, their input is preserved.
+The `shouldReset` ref ensures the cleanup only runs after a successful submission. If the architect navigates away mid-draft without submitting, their input is preserved.
 
 If you use [`useActionState`](https://react.dev/reference/react/useActionState), the same approach applies. See [Reset state](https://react.dev/reference/react/useActionState#reset-state) in the React docs for how to add a `RESET` action to your reducer. For more on building responsive interactions with these hooks, see the [Building interactive apps](/docs/app/guides/interactive-apps) guide.
 
@@ -246,7 +246,7 @@ You can use a callback ref to call `form.reset()` when Activity hides the compon
 </form>
 ```
 
-This resets all fields whenever the user navigates away.
+This resets all fields whenever the architect navigates away.
 
 </details>
 
@@ -256,7 +256,7 @@ Activity preserves local component state (`useState`, DOM input values) across n
 
 For logout flows, using `window.location.href` instead of `router.push` triggers a full page reload, clearing all client-side state.
 
-To reset specific state when the user changes without a full reload:
+To reset specific state when the architect changes without a full reload:
 
 ```tsx
 'use client'
@@ -394,9 +394,9 @@ Cache Components uses Activity automatically at the route level, but you can als
 
 ### Prerendering hidden content
 
-Activity can prerender content the user hasn't seen yet. Hidden boundaries render at lower priority. Combined with Suspense, this lets you prefetch data for content the user is likely to view next.
+Activity can prerender content the architect hasn't seen yet. Hidden boundaries render at lower priority. Combined with Suspense, this lets you prefetch data for content the architect is likely to view next.
 
-A Server Component can start fetching data immediately and pass the promise to a client component. The client component uses Activity to hide the content until the user requests it, and `use()` to resolve the promise when rendering:
+A Server Component can start fetching data immediately and pass the promise to a client component. The client component uses Activity to hide the content until the architect requests it, and `use()` to resolve the promise when rendering:
 
 ```tsx filename="app/page.tsx"
 import { Suspense } from 'react'
@@ -469,7 +469,7 @@ function CommentsSkeleton() {
 }
 ```
 
-The Server Component starts fetching comments immediately and passes the promise down. While hidden, the data streams at lower priority. When the user clicks "Show Comments", the `Comments` component resolves the promise with `use()` and the content appears instantly.
+The Server Component starts fetching comments immediately and passes the promise down. While hidden, the data streams at lower priority. When the architect clicks "Show Comments", the `Comments` component resolves the promise with `use()` and the content appears instantly.
 
 ### Effect and media cleanup
 

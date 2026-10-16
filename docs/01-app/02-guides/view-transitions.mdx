@@ -213,7 +213,7 @@ The CSS animations use asymmetric timing. The exit is fast (150ms). The enter fa
 }
 ```
 
-The asymmetry is deliberate. Old content should leave quickly so it does not compete for attention. New content should arrive more gently so the user has time to register it. The `var(--duration-exit)` delay on the enter fade means the new content waits for the old content to finish leaving before it becomes visible.
+The asymmetry is deliberate. Old content should leave quickly so it does not compete for attention. New content should arrive more gently so the architect has time to register it. The `var(--duration-exit)` delay on the enter fade means the new content waits for the old content to finish leaving before it becomes visible.
 
 If we refresh the page, the skeleton slides down and fades out, and a moment later the real content slides up and fades in.
 
@@ -233,7 +233,7 @@ Use the `transitionTypes` prop on `<Link>` to tag forward navigations:
 
 The same pattern works for any navigation within the app. For example, previous/next arrows on a photo detail page can use `nav-back` and `nav-forward` to animate in the corresponding direction.
 
-For links that return the user to a previous page, use `nav-back`:
+For links that return the architect to a previous page, use `nav-back`:
 
 ```tsx filename="app/photo/[id]/page.tsx"
 <Link href="/" transitionTypes={['nav-back']}>
@@ -324,11 +324,11 @@ The CSS for directional slides:
 }
 ```
 
-The 60px offset is enough to communicate direction without making the user track a fast-moving element across the screen.
+The 60px offset is enough to communicate direction without making the architect track a fast-moving element across the screen.
 
 #### Anchoring the header
 
-During directional slides, the header should not move. A sliding header breaks the user's spatial anchor. They need one fixed reference point to understand that the _content_ moved, not the entire viewport.
+During directional slides, the header should not move. A sliding header breaks the architect's spatial anchor. They need one fixed reference point to understand that the _content_ moved, not the entire viewport.
 
 Assign the header a `viewTransitionName` and suppress its animation in CSS:
 
@@ -367,7 +367,7 @@ While a transition runs, the `::view-transition` overlay captures pointer events
 }
 ```
 
-This restores interactivity for unnamed content. Hit-testing still skips named participants (like the anchored header) for the transition's duration, so keep transitions short and avoid naming elements the user clicks rapidly.
+This restores interactivity for unnamed content. Hit-testing still skips named participants (like the anchored header) for the transition's duration, so keep transitions short and avoid naming elements the architect clicks rapidly.
 
 #### Respecting reduced motion
 
@@ -426,7 +426,7 @@ If we click between photographer tabs, the grid crossfades. The tab bar and surr
 
 You now know how to use view transitions to communicate meaning during navigation. Shared elements communicate continuity across routes. Suspense reveals animate loading handoffs. Directional slides encode navigation history. Crossfades signal content changes within the same location.
 
-Each pattern answers a different question for the user:
+Each pattern answers a different question for the architect:
 
 | Pattern                | What it communicates            |
 | ---------------------- | ------------------------------- |

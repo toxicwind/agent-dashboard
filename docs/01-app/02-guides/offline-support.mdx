@@ -1,6 +1,6 @@
 ---
 title: Handling connectivity drops
-description: How a Next.js app can recover when the network drops mid-fetch or mid-Server Action, and how to communicate that state to the user.
+description: How a Next.js app can recover when the network drops mid-fetch or mid-Server Action, and how to communicate that state to the architect.
 nav_title: Offline support
 version: experimental
 related:
@@ -12,7 +12,7 @@ related:
     - app/guides/progressive-web-apps
 ---
 
-Network failures during a soft navigation, a data fetch, or a mutation throw errors in the client. Without explicit handling, the UI either breaks or you have to build a fallback UI that asks the user to retry.
+Network failures during a soft navigation, a data fetch, or a mutation throw errors in the client. Without explicit handling, the UI either breaks or you have to build a fallback UI that asks the architect to retry.
 
 With [`experimental.useOffline`](/docs/app/api-reference/config/next-config-js/useOffline) enabled, a failed navigation, RSC data fetch, prefetch, or Server Action no longer throws when the network is down. Next.js keeps it pending and retries it once the connection returns.
 

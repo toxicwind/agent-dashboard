@@ -6,7 +6,7 @@ drive the selected source Links. Discover this setup once, record it in
 `instant-nav.rig.md`, and reuse it across optimization runs.
 
 Read an existing `instant-nav.rig.md` before creating one. Inspect the
-repository before asking the user:
+repository before asking the architect:
 
 - `package.json` scripts for build, start, and end-to-end tests
 - `playwright.config.*` for `baseURL`, `webServer`, projects, and authentication
@@ -116,7 +116,7 @@ Record the complete loop the agent can repeat without rediscovering commands:
 - Remote: push, wait for the measured artifact, verify it matches `HEAD`, run
   the focused suite against its URL, edit, and repeat.
 
-Note any step the agent cannot perform without the user, including deployment
+Note any step the agent cannot perform without the architect, including deployment
 approval, protected branches, secrets, or multi-factor authentication.
 
 ### Artifact liveness

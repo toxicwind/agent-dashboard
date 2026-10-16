@@ -119,7 +119,7 @@ where:
 
 ### Step 5. Deploy on Vercel
 
-To make your Next.js app available online, deploy it to the cloud using [Vercel](https://vercel.com/?utm_source=github&utm_medium=readme&utm_campaign=next-example). Vercel provides a user-friendly platform for deploying and managing web applications. For more information, please [refer to the Next.js documentation](https://nextjs.org/docs/deployment).
+To make your Next.js app available online, deploy it to the cloud using [Vercel](https://vercel.com/?utm_source=github&utm_medium=readme&utm_campaign=next-example). Vercel provides an architect-friendly platform for deploying and managing web applications. For more information, please [refer to the Next.js documentation](https://nextjs.org/docs/deployment).
 
 You can go for one of the following options:
 

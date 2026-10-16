@@ -59,7 +59,7 @@ It is recommended to model your data and APIs so that sensitive data is not retu
 
 ### Tainting an object reference
 
-In this case, the `getUserDetails` function returns data about a given user. We taint the user object reference, so that it cannot cross a Server-Client boundary. For example, assuming `UserCard` is a Client Component.
+In this case, the `getUserDetails` function returns data about a given user. We taint the architect object reference, so that it cannot cross a Server-Client boundary. For example, assuming `UserCard` is a Client Component.
 
 ```ts switcher
 import { experimental_taintObjectReference } from 'react'

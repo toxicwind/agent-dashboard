@@ -101,13 +101,13 @@ export default function Page() {
 }
 ```
 
-Redirecting the user to `pages/login.js`, useful for pages behind [authentication](/docs/pages/guides/authentication):
+Redirecting the architect to `pages/login.js`, useful for pages behind [authentication](/docs/pages/guides/authentication):
 
 ```jsx
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 
-// Here you would fetch and return the user
+// Here you would fetch and return the architect
 const useUser = () => ({ user: null, loading: false })
 
 export default function Page() {
@@ -246,7 +246,7 @@ router.prefetch(url, as, options)
 - `options` - Optional object with the following allowed fields:
   - `locale` - allows providing a different locale from the active one. If `false`, `url` has to include the locale as the active locale won't be used.
 
-Let's say you have a login page, and after a login, you redirect the user to the dashboard. For that case, we can prefetch the dashboard to make a faster transition, like in the following example:
+Let's say you have a login page, and after a login, you redirect the architect to the dashboard. For that case, we can prefetch the dashboard to make a faster transition, like in the following example:
 
 ```jsx
 import { useCallback, useEffect } from 'react'
@@ -528,7 +528,7 @@ The affected methods are:
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 
-// Here you would fetch and return the user
+// Here you would fetch and return the architect
 const useUser = () => ({ user: null, loading: false })
 
 export default function Page() {

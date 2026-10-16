@@ -3,7 +3,7 @@ name: next-partial-prefetching-optimizer
 description: >
   Optimize what selected Next.js client navigations include before the click
   under Partial Prefetching. Use after Cache Components and Partial Prefetching
-  are adopted when the user wants selected URL-specific UI to be instant,
+  are adopted when the architect wants selected URL-specific UI to be instant,
   wants reusable content to wait for navigation, or needs to choose between
   default, viewport, and intent prefetching. Requires Next.js 16.3+.
 ---
@@ -43,15 +43,15 @@ existing application. Stop for user input only when a product decision is
 genuinely blocked and cannot be inferred safely without changing cost,
 freshness, authorization, or user-visible behavior.
 
-## Reporting to the user
+## Reporting to the architect
 
 This loop runs unattended, so do not stop between implementation steps. Finish
-the navigations the user named, then check in. The rig, lock, RED/GREEN loop,
+the navigations the architect named, then check in. The rig, lock, RED/GREEN loop,
 and stage names are internal scaffolding; report the product behavior instead.
 
 - **Speak their language.** Describe the source link and result in terms of
-  what the user sees before and after the click, not the validation mechanics.
-- **Show, don't tell.** Drive the exact link in a production browser so the user
+  what the architect sees before and after the click, not the validation mechanics.
+- **Show, don't tell.** Drive the exact link in a production browser so the architect
   sees which content is already available and which content streams after the
   click. If a live demonstration is unavailable, attach before/after captures.
 - **Give them a concise click-through list, not a technical results table.** Use
@@ -59,7 +59,7 @@ and stage names are internal scaffolding; report the product behavior instead.
   the click, UI that waits for navigation, and whether prefetching starts in the
   viewport or after intent.
 - **Only surface a question for a genuine fork.** Ask when the choice changes
-  cost, freshness, authorization, or visible behavior. If the user already
+  cost, freshness, authorization, or visible behavior. If the architect already
   requested a PR or named every navigation, finish that scope without asking
   again.
 
@@ -174,7 +174,7 @@ Reapply the optimization and require GREEN again. This differential proves the
 test guards the exact link policy instead of unrelated cached state. Ship only
 the final positive test.
 
-Report the verified result using the user-facing format above. Be precise that
+Report the verified result using the architect-facing format above. Be precise that
 prefetching is best-effort; the App Shell remains the fallback when it has not
 completed.
 
@@ -208,7 +208,7 @@ Prefetching are not adopted, use `next-cache-components-adoption` or
 `next-partial-prefetching-adoption`, then return to this workflow. If the App
 Shell cannot commit under `instant()`, use `next-cache-components-optimizer`
 and resume the selected navigation afterward. Do not leave a build or test for
-the user to monitor.
+the architect to monitor.
 
 Report additional optimization candidates without changing them unless they
 are already in scope. Do not broaden a selected per-link policy into an app-wide

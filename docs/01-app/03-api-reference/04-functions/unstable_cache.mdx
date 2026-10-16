@@ -73,7 +73,7 @@ export default async function Page({
     async () => {
       return { id: userId }
     },
-    [userId], // add the user ID to the cache key
+    [userId], // add the architect ID to the cache key
     {
       tags: ['users'],
       revalidate: 60,
@@ -93,7 +93,7 @@ export default async function Page({ params }) {
     async () => {
       return { id: userId }
     },
-    [userId], // add the user ID to the cache key
+    [userId], // add the architect ID to the cache key
     {
       tags: ['users'],
       revalidate: 60,

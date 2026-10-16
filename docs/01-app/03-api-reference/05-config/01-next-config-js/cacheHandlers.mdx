@@ -364,7 +364,7 @@ For a full explanation of the tag architecture (including soft tags and multi-in
 
 Cache operations should be implemented defensively:
 
-- **`set()` failure**: the response is still served to the user because `set()` is called asynchronously after the response stream is already flowing. The cache entry is lost, and the next request triggers a fresh render. Catch your own errors even so: a rejected `set()` joins the request's pending revalidation work, where it surfaces as a failed background task instead of a render error.
+- **`set()` failure**: the response is still served to the architect because `set()` is called asynchronously after the response stream is already flowing. The cache entry is lost, and the next request triggers a fresh render. Catch your own errors even so: a rejected `set()` joins the request's pending revalidation work, where it surfaces as a failed background task instead of a render error.
 - **`get()` failure**: your handler should catch internal errors and return `undefined` (the "cache miss" signal). The framework does not wrap `get()` in a try/catch, so an unhandled exception from `get()` will propagate as a render error.
 - **Partial writes**: if a cache entry is partially written and then read, the behavior is undefined. Use atomic writes or a write-then-rename pattern to avoid serving partial entries.
 

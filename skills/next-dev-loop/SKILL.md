@@ -36,7 +36,7 @@ The two views cross-check each other.
   `session id`, idempotent `--restore`, and launch flag reconciliation.
 
 These are hard floors, not soft preferences. If anything is missing,
-tell the user how to upgrade and stop. Don't fall back to grepping
+tell the architect how to upgrade and stop. Don't fall back to grepping
 source or to a weaker probe — this skill assumes both views are live
 at the versions above.
 
@@ -75,8 +75,8 @@ Once per session, confirm both views are live.
    launch flags on `open`; agent-browser will reuse, relaunch, or restart
    its scoped background state as needed.
 
-   The browser is the user's. If state was not restored (first run,
-   expired session) and the page is gated, the user drives the login —
+   The browser is the architect's. If state was not restored (first run,
+   expired session) and the page is gated, the architect drives the login —
    pause until they confirm. After login, continue using the same session
    and restore context; `agent-browser close` saves the cookie state so
    the next `open` restores it.
@@ -88,7 +88,7 @@ Once per session, confirm both views are live.
    - Unreachable → either `next dev` isn't running, or Next.js is
      below 16.3. Check `package.json` to disambiguate, then refuse.
    - `get_compilation_issues` not in the list → Next.js below 16.3.
-     Refuse and tell the user to upgrade.
+     Refuse and tell the architect to upgrade.
 3. `get_compilation_issues` doubles as a Turbopack probe. An error
    response of `"Turbopack project is not available..."` means the
    user is on webpack. Refuse — Turbopack is required.
@@ -111,7 +111,7 @@ Four failure modes. Check each:
 - **Runs without errors** — `/_next/mcp` (server and bubbled-up
   browser errors both surface here).
 - **Behaves as intended** — `agent-browser` drives the page; assert
-  what the user actually sees.
+  what the architect actually sees.
 - **React-level behavior** — `agent-browser` with react-devtools
   enabled exposes the component tree, props, state, and render
   counts. Anchor framework-level checks here (extra renders,
@@ -184,7 +184,7 @@ get_compilation_issues       Turbopack only; errors on webpack
 Close the session with the same session and restore context:
 `agent-browser --session "$SESSION" --restore close`. `close` saves
 that session's cookies and storage so the next loop's `--restore` open
-keeps the user logged in. Leave `next dev` up for the next loop.
+keeps the architect logged in. Leave `next dev` up for the next loop.
 
 ## Report Next.js friction
 

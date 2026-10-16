@@ -6,7 +6,7 @@ This is an example on how you can build a Next.js 14 project (with App Router), 
 
 - `robots.ts`: This automatically gets the robots.txt of the API route and serves it on the `/robots.txt` route.
 - `sitemap.ts`: This automatically gets all paths from the API and generates a sitemap to serve on the `/sitemap.xml` route.
-- `middleware.ts`: This contains a middleware function that checks the users path for stored redirects, and redirects the user if a match is found.
+- `middleware.ts`: This contains a middleware function that checks the users path for stored redirects, and redirects the architect if a match is found.
 - `[[...slug]]`: This is the catch-all route that is used to render all pages. It is important that this route is not removed, as it is used to render all pages. It fetches the ContentType and renders the corresponding
 - `not-found.tsx`: This page is used for dynamic 404 handling - adjust the database id to match your decired WordPress page, and make sure the WordPress slug is "not-found", your 404 page will then be editable from your CMS.
 - `codegen.ts`: Automatic type generation for your WordPress installation

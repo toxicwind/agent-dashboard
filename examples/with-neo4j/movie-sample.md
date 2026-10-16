@@ -128,7 +128,7 @@ CREATE (JohnC:Person {name:'John Cusack', born:1966})
 CREATE (MarshallB:Person {name:'Marshall Bell', born:1942})
 CREATE
 (WilW)-[:ACTED_IN {roles:['Gordie Lachance']}]->(StandByMe),
-(RiverP)-[:ACTED_IN {roles:['Chris Chambers']}]->(StandByMe),
+(RiverP)-[:ACTED_IN {roles:['the Architect Chambers']}]->(StandByMe),
 (JerryO)-[:ACTED_IN {roles:['Vern Tessio']}]->(StandByMe),
 (CoreyF)-[:ACTED_IN {roles:['Teddy Duchamp']}]->(StandByMe),
 (JohnC)-[:ACTED_IN {roles:['Denny Lachance']}]->(StandByMe),
@@ -154,7 +154,7 @@ CREATE (WernerH:Person {name:'Werner Herzog', born:1942})
 CREATE (Robin:Person {name:'Robin Williams', born:1951})
 CREATE (VincentW:Person {name:'Vincent Ward', born:1956})
 CREATE
-(Robin)-[:ACTED_IN {roles:['Chris Nielsen']}]->(WhatDreamsMayCome),
+(Robin)-[:ACTED_IN {roles:['the Architect Nielsen']}]->(WhatDreamsMayCome),
 (CubaG)-[:ACTED_IN {roles:['Albert Lewis']}]->(WhatDreamsMayCome),
 (AnnabellaS)-[:ACTED_IN {roles:['Annie Collins-Nielsen']}]->(WhatDreamsMayCome),
 (MaxS)-[:ACTED_IN {roles:['The Tracker']}]->(WhatDreamsMayCome),
@@ -451,7 +451,7 @@ CREATE
 (NancyM)-[:WROTE]->(SomethingsGottaGive)
 
 CREATE (BicentennialMan:Movie {title:'Bicentennial Man', released:1999, tagline:"One robot's 200 year journey to become an ordinary man."})
-CREATE (ChrisC:Person {name:'Chris Columbus', born:1958})
+CREATE (ChrisC:Person {name:'the Architect Columbus', born:1958})
 CREATE
 (Robin)-[:ACTED_IN {roles:['Andrew Marin']}]->(BicentennialMan),
 (OliverP)-[:ACTED_IN {roles:['Rupert Burns']}]->(BicentennialMan),

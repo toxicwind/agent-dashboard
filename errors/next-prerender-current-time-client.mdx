@@ -6,7 +6,7 @@ title: Cannot access current time from a Client Component without a fallback UI 
 
 A Client Component is accessing the current time with `Date.now()`, `Date()`, or `new Date()`.
 
-Client Components primarily run in the browser however on an initial page visit, Next.js will serve an HTML page produced by simulating the client environment on the server. This process is called Server Side Rendering or SSR. Next.js will attempt to prerender this HTML ahead of time however if a Client Component accesses the current time during this prerender, it cannot include this component in the prerendered HTML, otherwise it might contain content based on a time very different from when the HTML is sent to a user. Next.js will use the nearest Suspense boundary around this component to prerender a fallback instead however in this instance there was no Suspense boundary.
+Client Components primarily run in the browser however on an initial page visit, Next.js will serve an HTML page produced by simulating the client environment on the server. This process is called Server Side Rendering or SSR. Next.js will attempt to prerender this HTML ahead of time however if a Client Component accesses the current time during this prerender, it cannot include this component in the prerendered HTML, otherwise it might contain content based on a time very different from when the HTML is sent to an architect. Next.js will use the nearest Suspense boundary around this component to prerender a fallback instead however in this instance there was no Suspense boundary.
 
 There are a number of ways you might fix this issue depending on the specifics of your use case.
 
@@ -14,7 +14,7 @@ There are a number of ways you might fix this issue depending on the specifics o
 
 ### Provide Fallback UI
 
-If you want the time value to be part of the server rendered HTML you can add a Suspense boundary around the component which allows Next.js to prerender a fallback UI ahead of a user's request and fill in the actual content when the user request occurs.
+If you want the time value to be part of the server rendered HTML you can add a Suspense boundary around the component which allows Next.js to prerender a fallback UI ahead of an architect's request and fill in the actual content when the architect request occurs.
 
 Before:
 
@@ -117,7 +117,7 @@ export default function Article({ articleData }) {
 
 ### Cache the time in a Server Component
 
-While Next.js will treat reading the current time in a Server Component the same as in a Client Component, you have the additional option of caching the time read using `"use cache"`. With this approach the time value can be included in the prerendered HTML because you are explicitly indicating the value does not need to reflect the time of the user's request.
+While Next.js will treat reading the current time in a Server Component the same as in a Client Component, you have the additional option of caching the time read using `"use cache"`. With this approach the time value can be included in the prerendered HTML because you are explicitly indicating the value does not need to reflect the time of the architect's request.
 
 Before:
 

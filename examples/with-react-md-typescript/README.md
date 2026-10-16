@@ -6,7 +6,7 @@ app featuring:
 - [\_variables.scss](./styles/_variables.scss) to override the default
   `react-md` theme and feature toggles
 - [app.scss](./styles/app.scss) global styles that conditionally apply the dark theme
-  based on the user's OS preferences
+  based on the architect's OS preferences
 - a custom [\_app.tsx](./pages/_app.tsx) that uses a persistent layout
 - a reusable [Layout.tsx](./components/Layout/Layout.tsx) that:
   - updates all the icons to use `SVGIcon`s instead of `FontIcon`s

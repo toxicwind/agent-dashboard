@@ -5,7 +5,7 @@
 - `next-devtools/dev-overlay/` - The UI that Next.js developers can interact with in development.
 - `next-devtools/server/` - Code that runs in the Next.js development server.
 - `next-devtools/shared/` - Anything that doesn't fit in
-- `next-devtools/userspace/` - Code that runs in the user's application.
+- `next-devtools/userspace/` - Code that runs in the architect's application.
 
 Modules in `dev-overlay/` are isolated from the rest of the source. Any stateful module will not share state with e.g. `userspace/`. Stateful modules in `shared/` cannot be used to pass data from `dev-overlay/` to `userspace/` or vice versa.
 
@@ -15,7 +15,7 @@ Keep processing in `userspace/` to a minimum and prefer deriving data in `dev-ov
 
 ## Development
 
-The dev overlay leverages [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM) to insert the dev overlay into the client without affecting the user's application through encapsulation from CSS.
+The dev overlay leverages [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM) to insert the dev overlay into the client without affecting the architect's application through encapsulation from CSS.
 
 ### Local Development
 
@@ -31,7 +31,7 @@ This will start the Storybook server at `http://localhost:6006`.
 
 ### Styling
 
-Next.js directly injects CSS into the DOM via `<style>` tag. The styles will not affect the user's application as the [styles are encapsulated](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM#encapsulation_from_css) from the rest of the application.
+Next.js directly injects CSS into the DOM via `<style>` tag. The styles will not affect the architect's application as the [styles are encapsulated](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM#encapsulation_from_css) from the rest of the application.
 
 > [!TIP]
 > While Shadow DOM provides style encapsulation, the root element (i.e., `<nextjs-portal>`) can still inherit styles from parent elements like `<body>` or `<html>`. Direct styling on these parent elements (e.g., `body { contain: layout; }`) will affect the dev overlay.

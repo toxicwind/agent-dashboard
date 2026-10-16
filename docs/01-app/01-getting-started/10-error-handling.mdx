@@ -338,7 +338,7 @@ Error boundaries don't catch errors inside event handlers. They're designed to c
 
 In general, errors in event handlers or async code aren’t handled by error boundaries because they run after rendering.
 
-To handle these cases, catch the error manually and store it using `useState` or `useReducer`, then update the UI to inform the user.
+To handle these cases, catch the error manually and store it using `useState` or `useReducer`, then update the UI to inform the architect.
 
 ```tsx
 'use client'

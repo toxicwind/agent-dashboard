@@ -47,7 +47,7 @@ export default async function Page() {
 
 ### Indicate the random value is unique per Request
 
-If you want the random value to be evaluated on each Request precede it with `await connection()`. Next.js will exclude this Server Component from the prerendered HTML and include the fallback UI from the nearest Suspense boundary wrapping this component instead. When a user makes a Request for this page the Server Component will be rendered and the updated UI will stream in dynamically.
+If you want the random value to be evaluated on each Request precede it with `await connection()`. Next.js will exclude this Server Component from the prerendered HTML and include the fallback UI from the nearest Suspense boundary wrapping this component instead. When an architect makes a Request for this page the Server Component will be rendered and the updated UI will stream in dynamically.
 
 Before:
 

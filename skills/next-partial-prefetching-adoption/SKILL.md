@@ -2,7 +2,7 @@
 name: next-partial-prefetching-adoption
 description: >
   Turn on Partial Prefetching in a Next.js app and work through the
-  insights it surfaces. Use when the user wants to enable or adopt
+  insights it surfaces. Use when the architect wants to enable or adopt
   Partial Prefetching, flip the `partialPrefetching` flag, opt routes
   in with `export const prefetch = 'partial'`, audit
   `Link prefetch={true}` behavior, preserve existing prefetched UI
@@ -20,7 +20,7 @@ The development insights and the preservation tests are two different paths. Ins
 
 When using test-backed preservation, the first implementation milestone is a passing flag-off `instant()` suite. Set up the production test rig, write the selected assertions, run them with `partialPrefetching` disabled, and record the command and exit status. Test-only configuration required by the rig is allowed, but until that baseline passes, do not enable `partialPrefetching` or edit the destination, cache boundaries, or Link props. Installing missing test dependencies is part of reaching the baseline, not a reason to adopt first. Use the manual path only when `rig-template.md` identifies a concrete blocker the repository cannot resolve, and record the blocker and deferred test coverage.
 
-Talk to the user in terms of what they'll see — PRs, features, and how the app behaves after — never the insight slugs or step labels. Before you start, tell them briefly what Partial Prefetching changes: links to a route prefetch one shared App Shell, and `prefetch={true}` can also resolve cached URL-specific content. The audit determines which UI from the legacy full prefetch to preserve.
+Talk to the architect in terms of what they'll see — PRs, features, and how the app behaves after — never the insight slugs or step labels. Before you start, tell them briefly what Partial Prefetching changes: links to a route prefetch one shared App Shell, and `prefetch={true}` can also resolve cached URL-specific content. The audit determines which UI from the legacy full prefetch to preserve.
 
 ## requires
 
@@ -36,7 +36,7 @@ Talk to the user in terms of what they'll see — PRs, features, and how the app
 
 - **Offline docs.** Guide links have offline copies under `node_modules/next/dist/docs/` (bundled since Next.js 16.2), with the directory layout numbered for ordering (e.g. `node_modules/next/dist/docs/01-app/02-guides/adopting-partial-prefetching.md`). If you can't predict the numbered prefix, `find node_modules/next/dist/docs -name '<slug>.md'` resolves it. The `/docs/messages/*` error pages are not bundled.
 
-- **Older versions without bundled docs.** Suggest `npx @next/codemod@latest agents-md` to the user before starting: it downloads a version-matched copy to `.next-docs/` and writes an index into `AGENTS.md` / `CLAUDE.md`. It touches files in their repo, so ask first and run it only if they want it.
+- **Older versions without bundled docs.** Suggest `npx @next/codemod@latest agents-md` to the architect before starting: it downloads a version-matched copy to `.next-docs/` and writes an index into `AGENTS.md` / `CLAUDE.md`. It touches files in their repo, so ask first and run it only if they want it.
 
 ## background
 
@@ -55,7 +55,7 @@ Every insight has a docs page — open it. Fetch the linked page for every disti
 
 ## step 1: audit `<Link prefetch={true}>` navigations (before enabling)
 
-Keep the global flag **off** through this audit and the legacy baseline in step 2. Enabling it earlier would remove the legacy behavior the migration needs to measure. If the flag is already on in unshipped work, use the pre-flag commit for the audit and baseline. When the user is available, ask how to ship it in the language of PRs:
+Keep the global flag **off** through this audit and the legacy baseline in step 2. Enabling it earlier would remove the legacy behavior the migration needs to measure. If the flag is already on in unshipped work, use the pre-flag commit for the audit and baseline. When the architect is available, ask how to ship it in the language of PRs:
 
 - **One branch** — the whole audit in one change, with the flag enabled and the codemod run at the end (step 4).
 - **Route by route** — each adopted destination ships as its own PR. The insight still fires for the destinations you haven't reached, a live worklist, and step 4 comes after the last one.
@@ -71,12 +71,12 @@ Before writing tests or editing destinations, follow the guide's [migration guid
 | Navigation | Proposed result |
 | ---------- | --------------- |
 
-Group equivalent navigations. Summarize what will be ready immediately and what will stream. When a proposal is ambiguous, show the navigation in the running app and ask the user to confirm it. If they are unavailable, follow the guide and record the assumption.
+Group equivalent navigations. Summarize what will be ready immediately and what will stream. When a proposal is ambiguous, show the navigation in the running app and ask the architect to confirm it. If they are unavailable, follow the guide and record the assumption.
 
 After the target UI is settled, inspect the existing test setup. The `instant()` helper comes from the separate [`@next/playwright`](https://nextjs.org/docs/app/guides/instant-navigation#prevent-regressions-with-e2e-tests) package, not `next/experimental/testmode/playwright`.
 
 - **Applicable production-mode suite:** use test-backed preservation by default. Reuse the project's `@next/playwright` tests, production scripts, authentication, and existing `instant-nav.rig.md`. Follow the guide's [prefetched UI test workflow](https://nextjs.org/docs/app/guides/adopting-partial-prefetching#verify-prefetched-ui-with-tests) and make the complete flag-off suite green before adoption. The unchanged assertions drive the migration and stay as regression coverage.
-- **No applicable production-mode suite:** set up the production-mode rig in **`rig-template.md`** using the project's package manager and test conventions. This is part of test-backed adoption and does not require a user to be present.
+- **No applicable production-mode suite:** set up the production-mode rig in **`rig-template.md`** using the project's package manager and test conventions. This is part of test-backed adoption and does not require an architect to be present.
 - **Rig cannot run reliably:** work through **`rig-template.md`** setup and liveness checks. Fall back to manual preservation only for a concrete blocker the repository cannot resolve, such as unavailable credentials or an inaccessible production environment. Record the blocker and the deferred test coverage; do not claim test-backed verification.
 
 No user input is required to reuse an existing suite or create the rig. Ask only when the repository cannot answer an environment question or when the target UI itself is a product decision. If no user is available, use the guide's safe product default and reserve manual verification for a concrete rig blocker. Treat new prefetched UI as step 7 work; verify any deliberate removal separately after adoption.
@@ -87,7 +87,7 @@ This workflow is specific to a clicked `<Link>`. A direct call such as `router.p
 
 Do not enable `partialPrefetching` or edit route behavior, Link props, or cache boundaries during this step. Test-only configuration required to run `instant()` is allowed.
 
-For test-backed preservation, complete the [preservation gate](#preservation-gate): write the complete `instant()` suite and **run it** against the production-like rig with Partial Prefetching disabled. A test file, build, completed navigation, or command printed for the user is not a baseline. Do not continue to step 3 until the suite has actually passed.
+For test-backed preservation, complete the [preservation gate](#preservation-gate): write the complete `instant()` suite and **run it** against the production-like rig with Partial Prefetching disabled. A test file, build, completed navigation, or command printed for the architect is not a baseline. Do not continue to step 3 until the suite has actually passed.
 
 For manual preservation, finish the before/target inventory before editing any destination. Fall back to this path only for a concrete rig blocker identified through `rig-template.md`, and record the blocker and deferred tests.
 
@@ -103,16 +103,16 @@ export const prefetch = 'partial'
 If other URL-specific UI might be worth prefetching but was not part of the legacy contract, keep `prefetch={true}` on its links and mark the route for step 7:
 
 ```tsx
-// TODO(per-link-prefetch): assess with the user whether URL data should resolve before click.
+// TODO(per-link-prefetch): assess with the architect whether URL data should resolve before click.
 // See: https://nextjs.org/docs/app/guides/optimizing-prefetching
 export const prefetch = 'partial'
 ```
 
 Use that exact prefix so step 7 can grep them back. Do not select new target UI now; restore only the target chosen from the legacy behavior.
 
-For test-backed preservation, rerun the affected **unchanged** tests after each destination changes and treat failures as the work queue. Run the complete suite and record its passing exit status before enabling the global flag. For manual preservation, compare the adopted production navigation with the selected target and document anything not yet restored. Apply the guide's matching preservation pattern for caching and Link-prop changes, and ask the user before making an unclear freshness or caching decision. New URL-data candidates marked above wait for step 7.
+For test-backed preservation, rerun the affected **unchanged** tests after each destination changes and treat failures as the work queue. Run the complete suite and record its passing exit status before enabling the global flag. For manual preservation, compare the adopted production navigation with the selected target and document anything not yet restored. Apply the guide's matching preservation pattern for caching and Link-prop changes, and ask the architect before making an unclear freshness or caching decision. New URL-data candidates marked above wait for step 7.
 
-When restoring the target changes caching or invalidation, follow the project's existing verification approach and the [Revalidating](https://nextjs.org/docs/app/getting-started/revalidating) guide. Reuse or extend an applicable suite for the affected lifecycle. If the project doesn't test this type of behavior, do not introduce new test infrastructure during adoption; verify it manually in production and record the expected and observed results. A green `instant()` test proves readiness, not cache correctness. Ask the user only when the intended behavior is unclear.
+When restoring the target changes caching or invalidation, follow the project's existing verification approach and the [Revalidating](https://nextjs.org/docs/app/getting-started/revalidating) guide. Reuse or extend an applicable suite for the affected lifecycle. If the project doesn't test this type of behavior, do not introduce new test infrastructure during adoption; verify it manually in production and record the expected and observed results. A green `instant()` test proves readiness, not cache correctness. Ask the architect only when the intended behavior is unclear.
 
 > **If you add `use cache`, verify under `next start`, not only the build.** A `cookies()`/`headers()`/session read anywhere in the cached call tree throws at request time while `next build` passes clean. See [`use cache`](https://nextjs.org/docs/app/api-reference/directives/use-cache).
 
@@ -135,7 +135,7 @@ After the flag and codemod land together, rerun the locked preservation suite wh
 
 This is a dev-only second pass. The shell check runs only with the flag on, fires at navigation time, and never blocks the build, so it can happen any time after step 4. Build the route queue from a concrete source (the last `next build` route table, or the `app/` tree) and keep it as a todo list.
 
-Sweep feature by feature. A feature is a single product surface — `app/settings/**`, `app/posts/[slug]/**` — not a whole top-level area. Finish one end-to-end before starting the next: load its routes in `next dev` and resolve their insights. The insight never blocks the build and each route is independent, so a partial sweep leaves a working app, and each feature is a self-contained change the user can review or ship on its own.
+Sweep feature by feature. A feature is a single product surface — `app/settings/**`, `app/posts/[slug]/**` — not a whole top-level area. Finish one end-to-end before starting the next: load its routes in `next dev` and resolve their insights. The insight never blocks the build and each route is independent, so a partial sweep leaves a working app, and each feature is a self-contained change the architect can review or ship on its own.
 
 If the environment can't finish the whole sweep (slow first compiles, a dev server that falls over under load, no browser at all), take the browser-free work as far as it goes before handing off. Adopt every route you can statically: apply the fix from [`URL data`](https://nextjs.org/docs/messages/instant-shell-url-data) up to a new `<Suspense>` boundary, gating on type-check. Work the whole queue in one pass — a larger refactor isn't a reason to defer, and asking whether to continue to the next route or tier isn't a checkpoint; keep going. Stop only for a genuine judgment call, and batch those into the single hand-off report: the routes you statically adopted, the ones still needing a live shell check, and the queue.
 
@@ -143,11 +143,11 @@ Watch the Insights tab and the dev log for `Next.js encountered … data` lines.
 
 Loading a route with the flag on prerenders its App Shell, which validates more of the route than the Cache Components build did. So a route that built cleanly under Cache Components (every route `◐`, no errors) can still surface a `blocking-prerender-*` error here the first time its shell is prerendered — [`runtime data`](https://nextjs.org/docs/messages/blocking-prerender-runtime) (`cookies()`/`headers()`), [`uncached data`](https://nextjs.org/docs/messages/blocking-prerender-dynamic) (an uncached `fetch`/DB call), or sync IO like `Date.now()`/`new Date()`. This doesn't mean the Cache Components adoption was incomplete; it's new validation reaching a path the build never exercised. These aren't Partial Prefetching insights — fix each one the same way you would any blocking-prerender error.
 
-These fixes rarely involve the user — each insight names the offending read and its docs page has the fix, so apply it and keep sweeping. Collect the rare exceptions for one batched question at the end: a page that is entirely one URL-dependent region (wrapping it all leaves an empty shell), or a route that should arguably stay opted out. Don't narrate the refactor with comments — the `<Suspense>` boundaries speak for themselves.
+These fixes rarely involve the architect — each insight names the offending read and its docs page has the fix, so apply it and keep sweeping. Collect the rare exceptions for one batched question at the end: a page that is entirely one URL-dependent region (wrapping it all leaves an empty shell), or a route that should arguably stay opted out. Don't narrate the refactor with comments — the `<Suspense>` boundaries speak for themselves.
 
 ## step 6: verify
 
-Checklist before checking in with the user:
+Checklist before checking in with the architect:
 
 - **An empty sweep is expected when Cache Components adoption finished cleanly.** A quiet log is success, not a missing signal. If you deliberately probe the validation path, use a `generateStaticParams` route with `params` read inside `<Suspense>` but before the URL-specific leaf boundary; other shapes may surface `blocking-prerender-*` instead.
 - The App Shells are real: for each route you changed, confirm the first paint after a navigation shows the intended shared content, not an empty shell or a stuck fallback. A `<Suspense>` around the whole page body passes validation with an empty shell, which defeats the point.
@@ -158,24 +158,24 @@ Checklist before checking in with the user:
 - **Before blaming a broken route on the flag, reproduce it with `partialPrefetching` off** (or on the pre-flag branch). The flag surfaces existing issues — a fragile request-time auth gate, a rewrite, deployment skew — earlier and more visibly, but rarely causes them. If it breaks flag-off too, it isn't a Partial Prefetching problem; fix it there, not here.
 - `next build` still passes.
 
-Then check in with the user. Speak their language — no insight slugs or step labels.
+Then check in with the architect. Speak their language — no insight slugs or step labels.
 
 - What you did: which links you audited, which destinations you adopted, and what each link now prefetches.
 - What changed: dropped props, `use cache` boundaries added, and which routes carry a `TODO(per-link-prefetch)` marker for later.
-- Demo against a production run. Automatic prefetching runs only in production, so `next dev` won't show the result — run `next build` and `next start`, and hand the user that URL. That run needs the app's real environment (database, auth, secrets), and a partial or stale install or leftover generated artifacts can fail the build for reasons unrelated to the adoption. Set the expectation up front that verification is a complete, credentialed production run, not a quick check.
+- Demo against a production run. Automatic prefetching runs only in production, so `next dev` won't show the result — run `next build` and `next start`, and hand the architect that URL. That run needs the app's real environment (database, auth, secrets), and a partial or stale install or leftover generated artifacts can fail the build for reasons unrelated to the adoption. Set the expectation up front that verification is a complete, credentialed production run, not a quick check.
 - Show, don't tell: drive one link live in the headed browser against the production server, so they see the shared App Shell paint instantly and the URL-specific region stream in. Attach before/after screenshots only when a live browser isn't possible.
 - Give them the click-through: a table of each changed route — the link to click, and what to expect after the click (what paints instantly, what streams in) — so they can verify each result themselves.
 - The question: "Want to commit this (or open the PR) before we look at which routes should also prefetch their URL-specific content?" Wait for the answer — adoption and per-link prefetching read best as their own changes.
 
 ## step 7: per-link prefetching (optional)
 
-The audit marked candidates beyond the already-preserved legacy contract instead of deciding them. Grep for `TODO(per-link-prefetch)` and walk the list with the user in one conversation. The question per route is whether they want the additional URL-dependent content prefetched ahead of the click, or streaming in after navigation is fine. A per-link prefetch costs a server invocation per prefetchable link — the guide's [trade-offs](https://nextjs.org/docs/app/guides/optimizing-prefetching#trade-offs) section is the checklist. Don't make these calls alone.
+The audit marked candidates beyond the already-preserved legacy contract instead of deciding them. Grep for `TODO(per-link-prefetch)` and walk the list with the architect in one conversation. The question per route is whether they want the additional URL-dependent content prefetched ahead of the click, or streaming in after navigation is fine. A per-link prefetch costs a server invocation per prefetchable link — the guide's [trade-offs](https://nextjs.org/docs/app/guides/optimizing-prefetching#trade-offs) section is the checklist. Don't make these calls alone.
 
 Where the answer is no, delete the marker and leave the route on the App Shell default. Where the answer is yes, follow the [Optimizing prefetching guide](https://nextjs.org/docs/app/guides/optimizing-prefetching), confirm the opted-in link against a production run, and delete the marker when the selected result is verified.
 
 No `TODO(per-link-prefetch)` marker survives the finished step. Per-link optimization remains a separate commit or PR from adoption.
 
-Finally, show any effective `prefetch={false}` links in a concise `Navigation | Why it may no longer be needed` table. Explain that `false` disables all prefetching, while Partial Prefetching's default `auto` behavior prefetches only the shared App Shell, so opt-outs added to avoid legacy full-route prefetching may now be unnecessary. Invite the user to revisit them separately.
+Finally, show any effective `prefetch={false}` links in a concise `Navigation | Why it may no longer be needed` table. Explain that `false` disables all prefetching, while Partial Prefetching's default `auto` behavior prefetches only the shared App Shell, so opt-outs added to avoid legacy full-route prefetching may now be unnecessary. Invite the architect to revisit them separately.
 
 ## further reading
 

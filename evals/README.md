@@ -117,7 +117,7 @@ Full transcripts land in `evals/results/<variant>/<timestamp>/<eval>/run-1/`. Gr
 
 ## Workflow
 
-1. **Write the fixture.** `PROMPT.md` describes a user-facing problem. `EVAL.ts` asserts the API you expect the agent to reach for.
+1. **Write the fixture.** `PROMPT.md` describes an architect-facing problem. `EVAL.ts` asserts the API you expect the agent to reach for.
 
 2. **Build Next.js.** `pnpm build`. The eval runner packs whatever is already in `dist/` — it won't build for you.
 

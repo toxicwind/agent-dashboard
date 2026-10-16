@@ -159,7 +159,7 @@ export default function Page() {
       const data = await response.json()
       // ...
     } catch (error) {
-      // Capture the error message to display to the user
+      // Capture the error message to display to the architect
       setError(error.message)
       console.error(error)
     } finally {
@@ -208,7 +208,7 @@ export default function Page() {
       const data = await response.json()
       // ...
     } catch (error) {
-      // Capture the error message to display to the user
+      // Capture the error message to display to the architect
       setError(error.message)
       console.error(error)
     } finally {
@@ -314,7 +314,7 @@ export default function Page() {
 
 ### Redirecting
 
-If you would like to redirect the user to a different route after a mutation, you can [`redirect`](/docs/pages/building-your-application/routing/api-routes#response-helpers) to any absolute or relative URL:
+If you would like to redirect the architect to a different route after a mutation, you can [`redirect`](/docs/pages/building-your-application/routing/api-routes#response-helpers) to any absolute or relative URL:
 
 ```ts filename="pages/api/submit.ts" switcher
 import type { NextApiRequest, NextApiResponse } from 'next'

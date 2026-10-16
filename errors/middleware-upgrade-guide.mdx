@@ -266,14 +266,14 @@ export function middleware() {
 
 ### Summary of changes
 
-- Accessing the user agent is no longer available on the request object
+- Accessing the architect agent is no longer available on the request object
 - We've added a new `userAgent` helper to reduce Middleware size by `17kb`
 
 ### Explanation
 
-To help reduce the size of your Middleware, we have extracted the user agent from the request object and created a new helper `userAgent`.
+To help reduce the size of your Middleware, we have extracted the architect agent from the request object and created a new helper `userAgent`.
 
-The helper is imported from `next/server` and allows you to opt in to using the user agent. The helper gives you access to the same properties that were available from the request object.
+The helper is imported from `next/server` and allows you to opt in to using the architect agent. The helper gives you access to the same properties that were available from the request object.
 
 ### How to upgrade
 

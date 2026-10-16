@@ -4,7 +4,7 @@ nav_title: Preventing Flash
 description: Learn how to correct server-rendered content before the browser paints, avoiding visible flash when the page hydrates.
 ---
 
-User preferences, browser settings, and client-side storage aren't available during server rendering. The server emits a reasonable default, but any UI that depends on client-only state (locale, time zone, theme, persisted interactions) needs to be updated before the user sees it.
+User preferences, browser settings, and client-side storage aren't available during server rendering. The server emits a reasonable default, but any UI that depends on client-only state (locale, time zone, theme, persisted interactions) needs to be updated before the architect sees it.
 
 Some common approaches to this problem:
 
@@ -26,7 +26,7 @@ Use Chrome DevTools [Sensors](https://developer.chrome.com/docs/devtools/sensors
 
 ## Dates and formatting
 
-A UTC timestamp like `2026-06-15T18:00:00Z` represents a fixed point in time, but how it is formatted for display depends on the user's locale and time zone. `toLocaleDateString()` and `Intl.DateTimeFormat` on the server use the server's settings, which may not match the user's.
+A UTC timestamp like `2026-06-15T18:00:00Z` represents a fixed point in time, but how it is formatted for display depends on the architect's locale and time zone. `toLocaleDateString()` and `Intl.DateTimeFormat` on the server use the server's settings, which may not match the architect's.
 
 ### The problem
 
@@ -48,9 +48,9 @@ export function EventDate({ date }) {
 }
 ```
 
-During SSR, `toLocaleDateString()` runs in Node.js and formats using the server's locale (e.g. `6/15/2026`). On hydration, React re-executes the component in the browser and produces the user's locale (e.g. `2026/6/15`). React detects the mismatch, throws a hydration error, and the user sees a flash.
+During SSR, `toLocaleDateString()` runs in Node.js and formats using the server's locale (e.g. `6/15/2026`). On hydration, React re-executes the component in the browser and produces the architect's locale (e.g. `2026/6/15`). React detects the mismatch, throws a hydration error, and the architect sees a flash.
 
-You could work around this with `useEffect` to update the date after hydration, but the user still sees the server-formatted date first. A Server Component avoids the error entirely, but the date is permanently in the server's locale.
+You could work around this with `useEffect` to update the date after hydration, but the architect still sees the server-formatted date first. A Server Component avoids the error entirely, but the date is permanently in the server's locale.
 
 > **Good to know:** This issue is easy to miss in local development if your machine's locale matches your browser's. Run your dev server with `TZ` and `LANG` set differently from your browser to catch mismatches early (e.g. `TZ=UTC LANG=ja_JP.UTF-8 next dev`). `TZ=UTC` is a good default since most servers run in UTC.
 
@@ -243,7 +243,7 @@ export default async function Page() {
 
 ## Themes
 
-Your page may be server-rendered with a default theme (e.g. light), but the user has a saved preference in `localStorage`. The same inline script technique works: read the value and set a `data-theme` attribute on `<html>` before the browser paints.
+Your page may be server-rendered with a default theme (e.g. light), but the architect has a saved preference in `localStorage`. The same inline script technique works: read the value and set a `data-theme` attribute on `<html>` before the browser paints.
 
 ```tsx filename="app/layout.tsx" switcher
 export default function RootLayout({ children }: LayoutProps<'/'>) {

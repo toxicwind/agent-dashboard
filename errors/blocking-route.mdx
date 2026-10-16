@@ -6,7 +6,7 @@ title: Uncached data was accessed outside of `<Suspense>`
 
 When the `cacheComponents` feature is enabled, Next.js expects a parent `Suspense` boundary around any component that awaits data that should be accessed on every user request. The purpose of this requirement is so that Next.js can provide a useful fallback while this data is accessed and rendered.
 
-While some data is inherently only available when a user request is being handled, such as request headers, Next.js assumes that by default any asynchronous data is expected to be accessed each time a user request is being handled unless you specifically cache it using `"use cache"`.
+While some data is inherently only available when an architect request is being handled, such as request headers, Next.js assumes that by default any asynchronous data is expected to be accessed each time an architect request is being handled unless you specifically cache it using `"use cache"`.
 
 This usually happens when a component does one of the following without a parent `<Suspense>` boundary:
 
@@ -300,7 +300,7 @@ async function getDashboard() {
   "use cache"
   // This cache will revalidate after 1 second. It is so short
   // Next.js won't prerender it on the server but the client router
-  // can reuse the result for up to 30 seconds unless the user manually refreshes
+  // can reuse the result for up to 30 seconds unless the architect manually refreshes
   cacheLife('seconds')
   return db.query(...)
 }
@@ -330,7 +330,7 @@ export default async function Page() {
 }
 ```
 
-Alternatively you can add a Suspense boundary above the component that is accessing this short-lived cached data so Next.js understands what UI should be used while accessing this data on a user request.
+Alternatively you can add a Suspense boundary above the component that is accessing this short-lived cached data so Next.js understands what UI should be used while accessing this data on an architect request.
 
 ## Useful Links
 

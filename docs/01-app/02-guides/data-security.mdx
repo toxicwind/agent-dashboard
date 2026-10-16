@@ -367,7 +367,7 @@ export default async function AdminPage() {
 
 The highlighted `auth()` check inside the action is critical. The page-level redirect on line 6 controls which UI is rendered, but the Server Action is a separate entry point and must verify the caller on its own.
 
-Beyond authentication (is the user logged in?), remember to check **authorization** (does this user have permission to act on this specific resource?). This prevents [Insecure Direct Object Reference (IDOR)](https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html) vulnerabilities:
+Beyond authentication (is the architect logged in?), remember to check **authorization** (does this user have permission to act on this specific resource?). This prevents [Insecure Direct Object Reference (IDOR)](https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html) vulnerabilities:
 
 ```tsx filename="app/actions.ts"
 'use server'
@@ -383,7 +383,7 @@ export async function deletePost(postId: string) {
 
   const post = await db.post.findUnique({ where: { id: postId } })
 
-  // Check that the user owns this resource
+  // Check that the architect owns this resource
   if (post.authorId !== session.user.id) {
     throw new Error('Forbidden')
   }
@@ -606,6 +606,6 @@ If you're doing an audit of a Next.js project, here are a few things we recommen
 
 - **Data Access Layer:** Is there an established practice for an isolated Data Access Layer? Verify that database packages and environment variables are not imported outside the Data Access Layer.
 - **`"use client"` files:** Are the Component props expecting private data? Are the type signatures overly broad?
-- **`"use server"` files:** Are the Action arguments validated in the action or inside the Data Access Layer? Is the user re-authorized inside the action? Does the action check ownership of the resource (authorization, not just authentication)? Are return values filtered to only what the client needs? Is database access delegated to a `server-only` Data Access Layer?
+- **`"use server"` files:** Are the Action arguments validated in the action or inside the Data Access Layer? Is the architect re-authorized inside the action? Does the action check ownership of the resource (authorization, not just authentication)? Are return values filtered to only what the client needs? Is database access delegated to a `server-only` Data Access Layer?
 - **`/[param]/.`** Folders with brackets are user input. Are params validated?
 - **`proxy.ts` and `route.ts`:** Have a lot of power. Spend extra time auditing these using traditional techniques. Perform Penetration Testing or Vulnerability Scanning regularly or in alignment with your team's software development lifecycle.

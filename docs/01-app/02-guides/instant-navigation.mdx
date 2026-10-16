@@ -17,7 +17,7 @@ This guide walks through understanding instant navigations, writing a route that
 
 ## What "instant" means
 
-A navigation is **instant** when the browser can start rendering the new page the moment the user clicks, with static, cached, and fallback content showing up right away, while the server streams the remaining content into its fallbacks.
+A navigation is **instant** when the browser can start rendering the new page the moment the architect clicks, with static, cached, and fallback content showing up right away, while the server streams the remaining content into its fallbacks.
 
 > **Good to know:** This definition assumes caches are warm. Cold caches still require the server to compute the cached result once, so the first navigation to a route may still wait.
 
@@ -102,7 +102,7 @@ With Partial Prefetching enabled, `prefetch={true}` also opts the link into [per
 
 ### Validate instant navigation
 
-By **default** (`validationLevel: 'warning'`), Cache Components apps validate every Page and Default segment in development. Validation surfaces what would keep navigations into a segment from being instant — which navigations would block, where a `<Suspense>` boundary is missing, and which data is reaching the user uncached.
+By **default** (`validationLevel: 'warning'`), Cache Components apps validate every Page and Default segment in development. Validation surfaces what would keep navigations into a segment from being instant — which navigations would block, where a `<Suspense>` boundary is missing, and which data is reaching the architect uncached.
 
 To opt out of automatic validation and only validate segments that explicitly export `instant`, set [`validationLevel`](/docs/app/api-reference/file-conventions/route-segment-config/instant#configuring-validation-defaults) to `'manual-warning'`:
 
@@ -309,7 +309,7 @@ Toggle **Pause on navigations** off when you're done inspecting loading states. 
 
 ## Prevent regressions with e2e tests
 
-Validation catches structural problems during development, but as the codebase grows, the structural checks can only tell you that a shell exists. They can't tell you whether the right content is in it. E2E tests close that gap: they assert on what the user actually sees when the navigation completes, catching regressions before they ship.
+Validation catches structural problems during development, but as the codebase grows, the structural checks can only tell you that a shell exists. They can't tell you whether the right content is in it. E2E tests close that gap: they assert on what the architect actually sees when the navigation completes, catching regressions before they ship.
 
 The [`@next/playwright`](https://www.npmjs.com/package/@next/playwright) package includes an `instant()` helper for this. Install it alongside `@playwright/test`:
 
@@ -386,7 +386,7 @@ const nextConfig: NextConfig = {
 export default nextConfig
 ```
 
-Focus these tests on the user flows that matter most.
+Focus these tests on the architect flows that matter most.
 
 ## Fixing a navigation that blocks
 

@@ -26,5 +26,5 @@ Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&ut
 
 ## How does it work with ssr?
 
-- On the server-side, we detect the user's device to decide how many items we are showing and then using flex-basis to assign \* width to the carousel item.
+- On the server-side, we detect the architect's device to decide how many items we are showing and then using flex-basis to assign \* width to the carousel item.
 - On the client-side, old fashion getting width of the container and assign the average of it to each carousel item.

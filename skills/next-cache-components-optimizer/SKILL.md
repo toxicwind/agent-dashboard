@@ -54,7 +54,7 @@ command, platform, or env var below as a requirement.
 
 ## Two navigations, two loading states
 
-A route reaches the user two ways, and both must be instant:
+A route reaches the architect two ways, and both must be instant:
 
 - **Initial load (hard navigation)** commits the route's prerendered static
   shell; deferred parts stream in behind their loading skeletons (Suspense
@@ -85,12 +85,12 @@ the lock; do not time it. A trustworthy verdict requires a production build
 The GREEN under the lock is the deterministic verdict; each gate keeps it
 trustworthy.
 
-## Reporting to the user
+## Reporting to the architect
 
 This loop is meant to run unattended, so it doesn't stop to ask between steps.
-Work the navigation the user named, finish it, and stop. What matters is how you
+Work the navigation the architect named, finish it, and stop. What matters is how you
 word and present the results, not how often you interrupt. The mechanics below —
-the rig, RED, GREEN, the gates — are your scaffolding; the user never needs to
+the rig, RED, GREEN, the gates — are your scaffolding; the architect never needs to
 hear those words.
 
 - **Speak their language.** Describe the gap and the result in terms of what the
@@ -98,10 +98,10 @@ hear those words.
   anything painted; now the layout and skeletons paint instantly and the charts
   stream in" — not RED/GREEN, the lock, or the phase letters.
 - **Show, don't tell.** When you report a route, drive the browser (or attach
-  before/after screenshots) so the user watches the shell commit immediately and
+  before/after screenshots) so the architect watches the shell commit immediately and
   the data stream in, rather than reading a claim. Identical before and after
   means the fix did nothing — roll it back.
-- **Present a run as a list of results the user can click through** — one line
+- **Present a run as a list of results the architect can click through** — one line
   per navigation: the route, what commits instantly, and what streams in — not a
   transcript of the loop.
 - **Only surface a question for a genuine fork:** a fix that would change
@@ -164,7 +164,7 @@ verdicts below are meaningful on older versions.
 
 The principles in this skill are fixed; the infrastructure they run on is
 yours. On first use in a repository, discover how the project builds, deploys,
-authenticates, and tests (inspect the repository first, and ask the user only
+authenticates, and tests (inspect the repository first, and ask the architect only
 what it cannot answer), then write the answers to a committed
 `instant-nav.rig.md`. Every later run reads that file instead of
 rediscovering. The required build, test context, navigation contracts,

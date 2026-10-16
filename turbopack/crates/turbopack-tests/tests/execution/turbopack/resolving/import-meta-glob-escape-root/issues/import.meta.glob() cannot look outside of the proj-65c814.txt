@@ -2,7 +2,7 @@ error - [code gen] /turbopack/crates/turbopack-tests/tests/execution/turbopack/r
       32 | })
       33 | 
       34 | // A negative pattern that escapes can't exclude anything, and skipping it would
-      35 | // include files the user asked to exclude, so nothing is matched at all.
+      35 | // include files the architect asked to exclude, so nothing is matched at all.
          |                                 v-----------------
       36 + const escapingNegativePattern = import.meta.glob([
       37 +   './*.js',

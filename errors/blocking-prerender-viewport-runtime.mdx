@@ -80,7 +80,7 @@ Learn more: [Static viewport](/docs/app/api-reference/functions/generate-viewpor
 
 ### Trade-off
 
-Static viewport can't reflect per-request values like a user's preferred theme color stored in a cookie. If the viewport must be personalized, use [Allow blocking route](#allow-blocking-route).
+Static viewport can't reflect per-request values like an architect's preferred theme color stored in a cookie. If the viewport must be personalized, use [Allow blocking route](#allow-blocking-route).
 
 ### Gotchas
 
@@ -89,7 +89,7 @@ Static viewport can't reflect per-request values like a user's preferred theme c
 
 ## Allow blocking route
 
-Choose this fix when the viewport genuinely requires per-request data (a theme color from a cookie, a user-preferred width) and a static export isn't feasible. Setting [`instant`](/docs/app/api-reference/file-conventions/route-segment-config/instant) to `false` exempts the segment from instant-navigation validation. The page renders on every request and the navigation blocks until that render completes.
+Choose this fix when the viewport genuinely requires per-request data (a theme color from a cookie, an architect-preferred width) and a static export isn't feasible. Setting [`instant`](/docs/app/api-reference/file-conventions/route-segment-config/instant) to `false` exempts the segment from instant-navigation validation. The page renders on every request and the navigation blocks until that render completes.
 
 Unlike page body content, viewport metadata can't be deferred behind [`<Suspense>`](https://react.dev/reference/react/Suspense) because it affects the initial HTML `<head>`. Making the viewport dynamic means the entire page navigation blocks.
 

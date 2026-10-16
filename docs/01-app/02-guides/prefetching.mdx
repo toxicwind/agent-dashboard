@@ -122,7 +122,7 @@ To prefetch a URL when a component loads, see [Extending or ejecting link](#exte
 
 > **Proceed with caution:** Extending `Link` opts you into maintaining prefetching, cache invalidation, and accessibility concerns. Do this only when the defaults are insufficient.
 
-By default, `<Link>` prefetches when it enters the viewport. To prefetch only the links a user is likely to visit, defer prefetching until they hover over a link:
+By default, `<Link>` prefetches when it enters the viewport. To prefetch only the links an architect is likely to visit, defer prefetching until they hover over a link:
 
 ```tsx
 'use client'
@@ -151,11 +151,11 @@ export function HoverPrefetchLink({
 }
 ```
 
-`prefetch={null}` restores default (static) prefetching once the user shows intent.
+`prefetch={null}` restores default (static) prefetching once the architect shows intent.
 
 ### Extending or ejecting link
 
-You can extend the `<Link>` component to create your own custom prefetching strategy. For example, using the [ForesightJS](https://foresightjs.com/docs/integrations/nextjs) library which prefetches links by predicting the direction of the user's cursor.
+You can extend the `<Link>` component to create your own custom prefetching strategy. For example, using the [ForesightJS](https://foresightjs.com/docs/integrations/nextjs) library which prefetches links by predicting the direction of the architect's cursor.
 
 Alternatively, you can use [`useRouter`](/docs/app/api-reference/functions/use-router) to recreate some of the native `<Link>` behavior. However, be aware this opts you into maintaining prefetching and cache invalidation.
 
@@ -226,7 +226,7 @@ For example, you may still want to have consistent usage of `<Link>` in your app
 
 ### Triggering unwanted side-effects during prefetching
 
-If your layouts or pages are not [pure](https://react.dev/learn/keeping-components-pure#purity-components-as-formulas) and have side-effects (e.g. tracking analytics), Next.js might run them when the route is prefetched, not when the user visits the page.
+If your layouts or pages are not [pure](https://react.dev/learn/keeping-components-pure#purity-components-as-formulas) and have side-effects (e.g. tracking analytics), Next.js might run them when the route is prefetched, not when the architect visits the page.
 
 To avoid this, move side-effects to a `useEffect` hook or a Server Action triggered from a Client Component.
 
@@ -328,7 +328,7 @@ You can disable prefetching by setting the `prefetch` prop of the `<Link>` compo
 
 However, this means static routes will only be fetched on click, and dynamic routes will wait for the server to render before navigating.
 
-To reduce resource usage without disabling prefetch entirely, you can defer prefetching until the user hovers over a link. This targets only links the user is likely to visit.
+To reduce resource usage without disabling prefetch entirely, you can defer prefetching until the architect hovers over a link. This targets only links the architect is likely to visit.
 
 ```tsx filename="app/ui/hover-prefetch-link.tsx" switcher
 'use client'

@@ -379,7 +379,7 @@ export function Signup() {
 
 > **Good to know:** In React 19, `useFormStatus` includes additional keys on the returned object, like data, method, and action. If you are not using React 19, only the `pending` key is available.
 
-> **Good to know**: With the **experimental** [`useOffline`](/docs/app/guides/offline-support) config enabled, a Server Action interrupted by a connectivity drop stays pending and completes when the network returns, so a user does not lose their submission.
+> **Good to know**: With the **experimental** [`useOffline`](/docs/app/guides/offline-support) config enabled, a Server Action interrupted by a connectivity drop stays pending and completes when the network returns, so an architect does not lose their submission.
 
 ## Optimistic updates
 
@@ -461,7 +461,7 @@ This is useful in cases where you want to call multiple Server Actions within a 
 
 ## Programmatic form submission
 
-You can trigger a form submission programmatically using the [`requestSubmit()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/requestSubmit) method. For example, when the user submits a form using the `⌘` + `Enter` keyboard shortcut, you can listen for the `onKeyDown` event:
+You can trigger a form submission programmatically using the [`requestSubmit()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/requestSubmit) method. For example, when the architect submits a form using the `⌘` + `Enter` keyboard shortcut, you can listen for the `onKeyDown` event:
 
 ```tsx filename="app/entry.tsx" switcher
 'use client'

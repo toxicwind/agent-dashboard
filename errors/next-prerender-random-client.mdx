@@ -14,7 +14,7 @@ There are a number of ways you might fix this issue depending on the specifics o
 
 ### Provide Fallback UI
 
-Typically it is not possible to use `Math.random()` in a Client Component that is Server Rendered without introducing a hydration error. However if you find yourself with a component that calls `Math.random()` during rendering, and you already handle the tricky case of hydrating this value consistently, then you can add a Suspense boundary around the component that calls `Math.random()` to allow Next.js to prerender a fallback UI and fill in an actual random value when the user requests the page.
+Typically it is not possible to use `Math.random()` in a Client Component that is Server Rendered without introducing a hydration error. However if you find yourself with a component that calls `Math.random()` during rendering, and you already handle the tricky case of hydrating this value consistently, then you can add a Suspense boundary around the component that calls `Math.random()` to allow Next.js to prerender a fallback UI and fill in an actual random value when the architect requests the page.
 
 Before:
 

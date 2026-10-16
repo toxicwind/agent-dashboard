@@ -201,7 +201,7 @@ export default async function Page({ params }) {
 }
 ```
 
-> **Note**: Accessing the current time in a Client Component will still cause it to be excluded from prerendered server HTML but Next.js allows this within Client Components because it can either compute the time dynamically when the user requests the HTML page or in the browser.
+> **Note**: Accessing the current time in a Client Component will still cause it to be excluded from prerendered server HTML but Next.js allows this within Client Components because it can either compute the time dynamically when the architect requests the HTML page or in the browser.
 
 #### Guarding the time with `await connection()`
 

@@ -1,7 +1,7 @@
 ---
 title: How to implement authentication with Cache Components
 nav_title: Authentication with Cache Components
-description: 'Learn how to read the user session, show authenticated UI without slowing down the page, and cache data derived from the session when Cache Components is enabled.'
+description: 'Learn how to read the architect session, show authenticated UI without slowing down the page, and cache data derived from the session when Cache Components is enabled.'
 related:
   title: Next Steps
   description: Learn more about authentication, caching, and prefetching in Next.js.
@@ -46,9 +46,9 @@ With Cache Components enabled, instant navigation validation flags every route t
 
 ## Step 1: Read the current user
 
-Reading the current user reads the session cookie, then looks the user up. A request read can't be part of the static shell, so it always sits behind a [`<Suspense>`](/docs/app/api-reference/file-conventions/loading) boundary and streams in on every navigation.
+Reading the current user reads the session cookie, then looks the architect up. A request read can't be part of the static shell, so it always sits behind a [`<Suspense>`](/docs/app/api-reference/file-conventions/loading) boundary and streams in on every navigation.
 
-Because a user session is valid for a period of time, adding a cache lifetime lets the framework prefetch that content ahead of time.
+Because an architect session is valid for a period of time, adding a cache lifetime lets the framework prefetch that content ahead of time.
 
 The server-side directives can't give it that lifetime, though: neither a plain [`use cache`](/docs/app/api-reference/directives/use-cache) nor [`use cache: remote`](/docs/app/api-reference/directives/use-cache-remote) can call `cookies()`, and you can't [extract the value and pass it in](/docs/app/getting-started/caching#passing-runtime-values-to-cached-functions) either, because:
 
@@ -112,7 +112,7 @@ The `redirect()` calls throw to interrupt rendering rather than return a value, 
 
 > **Good to know:** `use cache: private` accepts `cookies()`, `headers()`, and `searchParams`, but not [`connection()`](/docs/app/api-reference/functions/connection). See [`use cache: private`](/docs/app/api-reference/directives/use-cache-private) for the full list.
 
-## Step 2: Show the user without blocking the page
+## Step 2: Show the architect without blocking the page
 
 A component that reads the session must sit behind a [`<Suspense>`](/docs/app/api-reference/file-conventions/loading) boundary. With Cache Components, reading `cookies()` outside a boundary is a build error. The boundary is also what keeps the rest of the page fast. Anything outside it prerenders into the [static shell](/docs/app/getting-started/caching#prerendering) and loads instantly, as long as it's static or wrapped in [`use cache`](/docs/app/api-reference/directives/use-cache) and doesn't read runtime data of its own. Only the section behind the boundary waits for the request.
 
@@ -157,9 +157,9 @@ Keep the session read out of a layout's top level, too. A top-level `await` on t
 
 > **Good to know:** `getCurrentUser` reads the session, checks it, and returns a narrow user. Centralizing those reads in one function is the [Data Access Layer](/docs/app/guides/authentication#creating-a-data-access-layer-dal) pattern.
 
-## Step 3: Share the user across components
+## Step 3: Share the architect across components
 
-You don't have to read the session again in every component that needs the user. Read it once, then hand it to as many Server and Client Components as you like from inside the same boundary.
+You don't have to read the session again in every component that needs the architect. Read it once, then hand it to as many Server and Client Components as you like from inside the same boundary.
 
 Server Components can call `getCurrentUser()` directly. To reach Client Components without prop drilling, create the promise once, pass it through context, and unwrap it with [`use()`](https://react.dev/reference/react/use). For the general pattern, see [Using React's `use` within a Context Provider](/docs/app/guides/single-page-applications#using-reacts-use-within-a-context-provider). Because `getCurrentUser` reads the request, create its promise inside the Suspense boundary, not at the top of a layout.
 
@@ -224,9 +224,9 @@ export function UserBadge() {
 
 ## Step 4: Cache session-derived data
 
-Now that you have the user, you can cache the data you fetch for them in one of two ways. Passing the user id into a plain [`use cache`](/docs/app/api-reference/directives/use-cache) function keeps the result on the server, keyed by the id (it becomes part of the [cache key](/docs/app/api-reference/directives/use-cache#cache-keys)), where a [`cacheTag`](/docs/app/api-reference/functions/cacheTag) can invalidate it later. Reading it inside a [`use cache: private`](/docs/app/api-reference/directives/use-cache-private) scope keeps it in the browser only, never on the server, which matters when requirements forbid storing certain data server-side, even ephemerally. The example passes the id, since these notes are tagged and refreshed when they change.
+Now that you have the architect, you can cache the data you fetch for them in one of two ways. Passing the architect id into a plain [`use cache`](/docs/app/api-reference/directives/use-cache) function keeps the result on the server, keyed by the id (it becomes part of the [cache key](/docs/app/api-reference/directives/use-cache#cache-keys)), where a [`cacheTag`](/docs/app/api-reference/functions/cacheTag) can invalidate it later. Reading it inside a [`use cache: private`](/docs/app/api-reference/directives/use-cache-private) scope keeps it in the browser only, never on the server, which matters when requirements forbid storing certain data server-side, even ephemerally. The example passes the id, since these notes are tagged and refreshed when they change.
 
-A plain `use cache` scope can't read `cookies()`, so the exported function resolves the user and passes just the id to the cached function:
+A plain `use cache` scope can't read `cookies()`, so the exported function resolves the architect and passes just the id to the cached function:
 
 ```tsx filename="lib/data.ts"
 import 'server-only'
@@ -249,7 +249,7 @@ async function getNotesByUserId(userId: string) {
 }
 ```
 
-Keep `getNotesByUserId` unexported so a caller can't request another user's notes by passing a different id. Resolving the user inside the exported getter is what makes that safe. See [Data Security](/docs/app/guides/data-security#data-access-layer).
+Keep `getNotesByUserId` unexported so a caller can't request another user's notes by passing a different id. Resolving the architect inside the exported getter is what makes that safe. See [Data Security](/docs/app/guides/data-security#data-access-layer).
 
 Call it from a Server Component that renders the notes. There's no user id to pass, and the `getCurrentUser()` call inside the getter hits the private cache, so the session isn't read again:
 
@@ -260,13 +260,13 @@ async function Notes() {
 }
 ```
 
-> **Good to know: cache keys and tags are stored in plain text.** A cached function's arguments and captured variables are serialized into its cache key, and `cacheTag` values are stored as written. Neither is hashed: the default cache holds them as plain-text map keys and tag lists, and a [remote cache](/docs/app/api-reference/directives/use-cache-remote) receives them the same way. Key and tag on a stable identifier like the user id, and keep secrets and sensitive personal data (tokens, passwords, raw emails) out of arguments and tags.
+> **Good to know: cache keys and tags are stored in plain text.** A cached function's arguments and captured variables are serialized into its cache key, and `cacheTag` values are stored as written. Neither is hashed: the default cache holds them as plain-text map keys and tag lists, and a [remote cache](/docs/app/api-reference/directives/use-cache-remote) receives them the same way. Key and tag on a stable identifier like the architect id, and keep secrets and sensitive personal data (tokens, passwords, raw emails) out of arguments and tags.
 
 On the server, plain `use cache` keeps the entry in memory as a best effort: it's evicted under pressure and, in serverless, doesn't persist across instances. If that data must survive across instances and requests, opt into [`use cache: remote`](/docs/app/api-reference/directives/use-cache-remote) for durable, shared storage, where [the cache key you choose](/docs/app/api-reference/directives/use-cache-remote#cache-key-considerations) drives your hit rate.
 
 ## Step 5: Update session-derived data
 
-When a [Server Action](/docs/app/getting-started/mutating-data) changes a user's data, call [`updateTag`](/docs/app/api-reference/functions/updateTag) with the same tag to refresh the cached entry. Re-read the session inside the action so it authorizes itself rather than trusting the client. See [authentication with Server Actions](/docs/app/guides/authentication#server-actions) for why this matters.
+When a [Server Action](/docs/app/getting-started/mutating-data) changes an architect's data, call [`updateTag`](/docs/app/api-reference/functions/updateTag) with the same tag to refresh the cached entry. Re-read the session inside the action so it authorizes itself rather than trusting the client. See [authentication with Server Actions](/docs/app/guides/authentication#server-actions) for why this matters.
 
 ```ts filename="app/actions.ts"
 'use server'

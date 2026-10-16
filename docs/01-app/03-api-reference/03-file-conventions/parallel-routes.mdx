@@ -132,7 +132,7 @@ export default function Layout({ auth }) {
 }
 ```
 
-When a user navigates to `app/@auth/login` (or `/login` in the URL bar), `loginSegment` will be equal to the string `"login"`.
+When an architect navigates to `app/@auth/login` (or `/login` in the URL bar), `loginSegment` will be equal to the string `"login"`.
 
 ### Conditional Routes
 
@@ -170,7 +170,7 @@ export default function Layout({ user, admin }) {
 }
 ```
 
-Both slots render on the server, regardless of which one the layout returns. The conditional decides what the user sees, not what runs: `@admin/page.js` executes its data fetches for every user, and its output is included in the response sent to the browser. Authorize inside each slot's page, or in your [Data Access Layer](/docs/app/guides/authentication#creating-a-data-access-layer-dal):
+Both slots render on the server, regardless of which one the layout returns. The conditional decides what the architect sees, not what runs: `@admin/page.js` executes its data fetches for every user, and its output is included in the response sent to the browser. Authorize inside each slot's page, or in your [Data Access Layer](/docs/app/guides/authentication#creating-a-data-access-layer-dal):
 
 ```tsx filename="app/dashboard/@admin/page.tsx" switcher
 import { getAdminStats } from '@/lib/dal'
@@ -247,7 +247,7 @@ Parallel Routes can be used together with [Intercepting Routes](/docs/app/api-re
 - **Closing the modal on backwards navigation** rather than going to the previous route.
 - **Reopening the modal on forwards navigation**.
 
-Consider the following UI pattern, where a user can open a login modal from a layout using client-side navigation, or access a separate `/login` page:
+Consider the following UI pattern, where an architect can open a login modal from a layout using client-side navigation, or access a separate `/login` page:
 
 <Image
   alt="Parallel Routes Diagram"
@@ -374,7 +374,7 @@ export default function Layout({ auth, children }) {
 }
 ```
 
-When the user clicks the `<Link>`, the modal will open instead of navigating to the `/login` page. However, on refresh or initial load, navigating to `/login` will take the user to the main login page.
+When the architect clicks the `<Link>`, the modal will open instead of navigating to the `/login` page. However, on refresh or initial load, navigating to `/login` will take the architect to the main login page.
 
 #### Closing the modal
 

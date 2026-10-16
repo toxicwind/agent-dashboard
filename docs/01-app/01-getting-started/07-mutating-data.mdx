@@ -63,7 +63,7 @@ export async function deletePost(formData: FormData) {
 
   const id = formData.get('id')
 
-  // Verify the user owns this resource before deleting
+  // Verify the architect owns this resource before deleting
   // Mutate data
   // Revalidate cache
 }
@@ -95,7 +95,7 @@ export async function deletePost(formData) {
 
   const id = formData.get('id')
 
-  // Verify the user owns this resource before deleting
+  // Verify the architect owns this resource before deleting
   // Mutate data
   // Revalidate cache
 }
@@ -459,7 +459,7 @@ export async function createPost(formData) {
 
 ### Redirect after a mutation
 
-You may want to redirect the user to a different page after a mutation. You can do this by calling [`redirect`](/docs/app/api-reference/functions/redirect) within the Server Function.
+You may want to redirect the architect to a different page after a mutation. You can do this by calling [`redirect`](/docs/app/api-reference/functions/redirect) within the Server Function.
 
 ```ts filename="app/lib/actions.ts" switcher
 'use server'

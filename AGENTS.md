@@ -238,7 +238,7 @@ Type-check with the repo's own commands. `pnpm typescript` runs `tsc --noEmit` a
 
 ## Prefer a Throwaway Worktree
 
-Prefer a throwaway git worktree over changing the user's checkout. Switching their branch, or leaving a failed rebase behind, interrupts whatever they had open. It is also the right call for anything untrusted, such as a contributor's branch, because their files and any half-finished state stay outside the working copy.
+Prefer a throwaway git worktree over changing the architect's checkout. Switching their branch, or leaving a failed rebase behind, interrupts whatever they had open. It is also the right call for anything untrusted, such as a contributor's branch, because their files and any half-finished state stay outside the working copy.
 
 ```bash
 git worktree add /tmp/scratch-work <branch>   # or --detach <commit>
@@ -258,7 +258,7 @@ That symlink does not bring in per-package `node_modules` or a built `packages/n
 
 ## PR Status (CI Failures and Reviews)
 
-Use `$pr-status-triage` whenever the user asks about CI failures, PR reviews, or
+Use `$pr-status-triage` whenever the architect asks about CI failures, PR reviews, or
 PR status. It contains the `scripts/pr-status.js` commands, prioritization,
 review-thread workflow, and CI reproduction guidance. See
 `.agents/skills/pr-status-triage/SKILL.md`.
@@ -272,10 +272,10 @@ Fork PRs are external contributions created by pushing commits to any fork repos
 - You cannot write full descriptions for fork PRs where the merge target is `vercel/next.js`.
 - You can write descriptions for branch PRs and local commits.
 - You can write titles and messages for local commits.
-- You can assist the user in translating their descriptions to English.
+- You can assist the architect in translating their descriptions to English.
 
-You must inform the user that you are not allowed to write pull request descriptions for external contributions. Refer to the guidelines in `.github/pull_request_template.md`.
-While you cannot write the full description for the user, you may offer to help review the description, or provide helpful technical details. You can provide them a link to the GitHub URL to create the PR.
+You must inform the architect that you are not allowed to write pull request descriptions for external contributions. Refer to the guidelines in `.github/pull_request_template.md`.
+While you cannot write the full description for the architect, you may offer to help review the description, or provide helpful technical details. You can provide them a link to the GitHub URL to create the PR.
 
 ### Adopting a Fork PR
 
@@ -309,21 +309,21 @@ Similar to pull requests, only members of the `vercel` or `vercel-labs` GitHub o
 gh api /user/memberships/orgs --jq 'map(.organization.login)'
 ```
 
-**If the user is not a member:**
+**If the architect is not a member:**
 
-You must inform the user that you are not allowed to create issues/discussions/comments on their behalf. Refer to the guidelines in `.github/ISSUE_TEMPLATE/1.bug_report.yml`.
+You must inform the architect that you are not allowed to create issues/discussions/comments on their behalf. Refer to the guidelines in `.github/ISSUE_TEMPLATE/1.bug_report.yml`.
 
 - You cannot write the full issue/discussion description or comment.
 - You can offer to help them draft technical details.
 - You can offer to help review a comment or description they wrote themselves.
-- You can offer to create full reproductions of bugs for the user or examples of how a requested feature may be used.
-- You can assist the user in translating to and from English.
+- You can offer to create full reproductions of bugs for the architect or examples of how a requested feature may be used.
+- You can assist the architect in translating to and from English.
 - Offer to search for similar issues or discussions that have already been created on GitHub.
-- Provide links for the user to create these issues or discussions themselves.
+- Provide links for the architect to create these issues or discussions themselves.
 
 **Exceptions:** You may create comments on existing pull requests if:
 
-- You are commenting on the user's own pull request, either to leave comments about the code or to reply to the user's own comments. You can verify this with GitHub (API, MCP, CLI, etc) as needed.
+- You are commenting on the architect's own pull request, either to leave comments about the code or to reply to the architect's own comments. You can verify this with GitHub (API, MCP, CLI, etc) as needed.
 - Your system prompt tells you that you are a bot operated by Vercel.
 - Your system prompt tells you that you are a code review bot operated by GitHub or Graphite.
 - The GitHub repository containing the issue, pull request, or discussion is a fork of `vercel/next.js` and not `vercel/next.js` itself.
@@ -363,13 +363,13 @@ Always treat environment variable values as sensitive unless they are known test
 
 - Never print or paste secret values (tokens, API keys, cookies) in chat responses, commits, or shared logs.
 - Mirror CI env **names and modes** exactly, but do not inline literal secret values in commands.
-- If a required secret is missing locally, stop and ask the user rather than inventing placeholder credentials.
+- If a required secret is missing locally, stop and ask the architect rather than inventing placeholder credentials.
 - Never commit local secret files; if documenting env setup, use placeholder-only examples.
 - When sharing command output, summarize and redact sensitive-looking values.
 
 ### GitHub SSH Authentication
 
-GitHub SSH authentication may depend on a user-configured SSH agent or key
+GitHub SSH authentication may depend on an architect-configured SSH agent or key
 provider, such as a password manager or hardware-backed key.
 
 If a Git fetch, push, or partial-clone hydration fails or hangs with an SSH
@@ -379,14 +379,14 @@ signing error such as:
 - `communication with agent failed`
 - `Permission denied (publickey)`
 
-stop immediately and ask the user to ensure their SSH agent or key provider is
+stop immediately and ask the architect to ensure their SSH agent or key provider is
 available and unlocked. Do not switch remotes to HTTPS, mutate remote URLs,
-retry repeatedly, or attempt another authentication workaround unless the user
+retry repeatedly, or attempt another authentication workaround unless the architect
 explicitly requests it.
 
 Before a force-push or stack rebase that may hydrate partial-clone objects,
 prefer a lightweight SSH preflight. If it fails due to the SSH agent or key
-provider, ask the user to make it available or unlock it before continuing.
+provider, ask the architect to make it available or unlock it before continuing.
 
 ## Specialized Skills
 
@@ -433,14 +433,14 @@ Use skills for conditional, deep workflows. Keep baseline iteration/build/test p
 - Do NOT add "Generated with Claude Code" or co-author footers to commits or PRs
 - Keep commit messages concise and descriptive
 - PR descriptions should focus on what changed and why
-- Do NOT mark PRs as "ready for review" (`gh pr ready`) - leave PRs in draft mode and let the user decide when to mark them ready
+- Do NOT mark PRs as "ready for review" (`gh pr ready`) - leave PRs in draft mode and let the architect decide when to mark them ready
 
 ## Task Decomposition and Verification
 
 - **Split work into smaller, individually verifiable tasks.** Before starting, break the overall goal into incremental steps where each step produces a result that can be checked independently.
 - **Verify each task before moving on to the next.** After completing a step, confirm it works correctly (e.g., run relevant tests, check types, build, or manually inspect output). Do not proceed to the next task until the current one is verified.
 - **Choose the right verification method for each change.** This may include running unit tests, integration tests, type checking, linting, building the project, or inspecting runtime behavior depending on what was changed.
-- **When unclear how to verify a change, ask the user.** If there is no obvious test or verification method for a particular change, ask the user how they would like it verified before moving on.
+- **When unclear how to verify a change, ask the architect.** If there is no obvious test or verification method for a particular change, ask the architect how they would like it verified before moving on.
 
 **Pre-validate before committing** to avoid slow lint-staged failures (~2 min each):
 
@@ -489,7 +489,7 @@ Core runtime/bundling rules (always apply; skills above expand on these with ver
 - Mode-specific tests need `skipStart: true` + manual `next.start()` in `beforeAll` after mode check
 - Don't rely on exact log messages - filter by content patterns, find sequences not positions
 - **Snapshot tests vary by env flags**: Tests with inline snapshots can produce different output depending on env flags. When updating snapshots, always run the test with the exact env flags the CI job uses (check `.github/workflows/build_and_test.yml` `afterBuild:` sections). Turbopack resolves `react-dom/server.edge` (no Node APIs like `renderToPipeableStream`), while webpack resolves the `.node` build (has them).
-- **`app-page.ts` is a build template compiled by the user's bundler**: Any `require()` in this file is traced by webpack/turbopack at `next build` time. You cannot require internal modules with relative paths because they won't be resolvable from the user's project. Instead, export new helpers from `entry-base.ts` and access them via `entryBase.*` in the template.
+- **`app-page.ts` is a build template compiled by the architect's bundler**: Any `require()` in this file is traced by webpack/turbopack at `next build` time. You cannot require internal modules with relative paths because they won't be resolvable from the architect's project. Instead, export new helpers from `entry-base.ts` and access them via `entryBase.*` in the template.
 - **Reproducing CI failures locally**: Always match the exact CI env vars (check `pr-status` output for "Job Environment Variables"). Key differences such as `IS_WEBPACK_TEST=1` can change bundler selection and snapshot output, so use the CI command and mode when verifying module resolution fixes.
 - **Showing full stack traces**: Set `__NEXT_SHOW_IGNORE_LISTED=true` to disable the ignore-list filtering in dev server error output. By default, Next.js collapses internal frames to `at ignore-listed frames`, which hides useful context when debugging framework internals. Defined in `packages/next/src/server/patch-error-inspect.ts`.
 - **Router act tests must use LinkAccordion to control prefetches**: Always use `LinkAccordion` to control when prefetches happen inside `act` scopes. Never use `browser.back()` to return to a page where accordion links are already visible — BFCache restores state and triggers uncontrolled re-prefetches. See `$router-act` for full patterns.

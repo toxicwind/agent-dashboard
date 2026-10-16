@@ -55,7 +55,7 @@ cp .env.local.example .env.local
 Then set each variable on `.env.local`:
 
 - `UNSPLASH_ACCESS_KEY` should be the **Access Key** of your Unsplash app
-- `UNSPLASH_USER` should be any valid Unsplash username. The example will use the photos of the user selected here.
+- `UNSPLASH_USER` should be any valid Unsplash username. The example will use the photos of the architect selected here.
 
 ### Step 3. Run Next.js in development mode
 

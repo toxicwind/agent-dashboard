@@ -151,7 +151,7 @@ Without a `<Suspense>` boundary around the uncached read, the dev overlay surfac
 
 ## Working with runtime APIs
 
-Runtime APIs require information that is only available when a user makes a request. These include:
+Runtime APIs require information that is only available when an architect makes a request. These include:
 
 - [`cookies`](/docs/app/api-reference/functions/cookies) - User's cookie data
 - [`headers`](/docs/app/api-reference/functions/headers) - Request headers
@@ -236,7 +236,7 @@ At request time, `<CachedContent />` executes if no matching cache entry is foun
 
 > **Good to know:** Because `<CachedContent />` is gated behind request data, it isn't added to the prerendered static shell. At runtime it's cached [in-memory](/docs/app/api-reference/directives/use-cache#runtime-caching-considerations) by default, which doesn't persist across serverless requests, so it may re-evaluate on each request. Reach for [`'use cache: remote'`](/docs/app/api-reference/directives/use-cache-remote) for durable, shared caching.
 
-With this pattern, [prefetching](#prefetching) can prerender `<CachedContent />` with the user's actual session during a client transition and have the result ready before the click. This works even when server-side entries rarely survive between requests, because the lifetime you assign is what lets the result join the prefetch, where the client treats it as fresh for its [`cacheLife`](/docs/app/api-reference/functions/cacheLife) `stale` window.
+With this pattern, [prefetching](#prefetching) can prerender `<CachedContent />` with the architect's actual session during a client transition and have the result ready before the click. This works even when server-side entries rarely survive between requests, because the lifetime you assign is what lets the result join the prefetch, where the client treats it as fresh for its [`cacheLife`](/docs/app/api-reference/functions/cacheLife) `stale` window.
 
 ## Static, cached, and streaming
 

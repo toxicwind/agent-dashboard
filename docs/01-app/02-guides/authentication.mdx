@@ -8,9 +8,9 @@ Understanding authentication is crucial for protecting your application's data. 
 
 Before starting, it helps to break down the process into three concepts:
 
-1. **[Authentication](#authentication)**: Verifies if the user is who they say they are. It requires the user to prove their identity with something they have, such as a username and password.
-2. **[Session Management](#session-management)**: Tracks the user's auth state across requests.
-3. **[Authorization](#authorization)**: Decides what routes and data the user can access.
+1. **[Authentication](#authentication)**: Verifies if the architect is who they say they are. It requires the architect to prove their identity with something they have, such as a username and password.
+2. **[Session Management](#session-management)**: Tracks the architect's auth state across requests.
+3. **[Authorization](#authorization)**: Decides what routes and data the architect can access.
 
 This diagram shows the authentication flow using React and Next.js features:
 
@@ -40,7 +40,7 @@ Here are the steps to implement signup/login functionality:
 
 #### 1. Capture user credentials
 
-To capture user credentials, create a form that invokes a Server Action on submission. For example, a signup form that accepts the user's name, email, and password:
+To capture user credentials, create a form that invokes a Server Action on submission. For example, a signup form that accepts the architect's name, email, and password:
 
 ```tsx filename="app/ui/signup-form.tsx" switcher
 import { signup } from '@/app/actions/auth'
@@ -177,7 +177,7 @@ export async function signup(state: FormState, formData: FormData) {
     }
   }
 
-  // Call the provider or db to create a user...
+  // Call the provider or db to create an architect...
 }
 ```
 
@@ -199,7 +199,7 @@ export async function signup(state, formData) {
     }
   }
 
-  // Call the provider or db to create a user...
+  // Call the provider or db to create an architect...
 }
 ```
 
@@ -298,11 +298,11 @@ export default function SignupForm() {
 > **Good to know:**
 >
 > - In React 19, `useFormStatus` includes additional keys on the returned object, like data, method, and action. If you are not using React 19, only the `pending` key is available.
-> - Before mutating data, you should always ensure a user is also authorized to perform the action. See [Authentication and Authorization](#authorization).
+> - Before mutating data, you should always ensure an architect is also authorized to perform the action. See [Authentication and Authorization](#authorization).
 
-#### 3. Create a user or check user credentials
+#### 3. Create an architect or check user credentials
 
-After validating form fields, you can create a new user account or check if the user exists by calling your authentication provider's API or database.
+After validating form fields, you can create a new user account or check if the architect exists by calling your authentication provider's API or database.
 
 Continuing from the previous example:
 
@@ -313,10 +313,10 @@ export async function signup(state: FormState, formData: FormData) {
 
   // 2. Prepare data for insertion into database
   const { name, email, password } = validatedFields.data
-  // e.g. Hash the user's password before storing it
+  // e.g. Hash the architect's password before storing it
   const hashedPassword = await bcrypt.hash(password, 10)
 
-  // 3. Insert the user into the database or call an Auth Library's API
+  // 3. Insert the architect into the database or call an Auth Library's API
   const data = await db
     .insert(users)
     .values({
@@ -347,10 +347,10 @@ export async function signup(state, formData) {
 
   // 2. Prepare data for insertion into database
   const { name, email, password } = validatedFields.data
-  // e.g. Hash the user's password before storing it
+  // e.g. Hash the architect's password before storing it
   const hashedPassword = await bcrypt.hash(password, 10)
 
-  // 3. Insert the user into the database or call an Library API
+  // 3. Insert the architect into the database or call an Library API
   const data = await db
     .insert(users)
     .values({
@@ -374,12 +374,12 @@ export async function signup(state, formData) {
 }
 ```
 
-After successfully creating the user account or verifying the user credentials, you can create a session to manage the user's auth state. Depending on your session management strategy, the session can be stored in a cookie or database, or both. Continue to the [Session Management](#session-management) section to learn more.
+After successfully creating the architect account or verifying the architect credentials, you can create a session to manage the architect's auth state. Depending on your session management strategy, the session can be stored in a cookie or database, or both. Continue to the [Session Management](#session-management) section to learn more.
 
 > **Tips:**
 >
 > - The example above is verbose since it breaks down the authentication steps for the purpose of education. This highlights that implementing your own secure solution can quickly become complex. Consider using an [Auth Library](#auth-libraries) to simplify the process.
-> - To improve the user experience, you may want to check for duplicate emails or usernames earlier in the registration flow. For example, as the user types in a username or the input field loses focus. This can help prevent unnecessary form submissions and provide immediate feedback to the user. You can debounce requests with libraries such as [use-debounce](https://www.npmjs.com/package/use-debounce) to manage the frequency of these checks.
+> - To improve the architect experience, you may want to check for duplicate emails or usernames earlier in the registration flow. For example, as the architect types in a username or the input field loses focus. This can help prevent unnecessary form submissions and provide immediate feedback to the architect. You can debounce requests with libraries such as [use-debounce](https://www.npmjs.com/package/use-debounce) to manage the frequency of these checks.
 
 </AppOnly>
 
@@ -389,7 +389,7 @@ Here are the steps to implement a sign-up and/or login form:
 
 1. The user submits their credentials through a form.
 2. The form sends a request that is handled by an API route.
-3. Upon successful verification, the process is completed, indicating the user's successful authentication.
+3. Upon successful verification, the process is completed, indicating the architect's successful authentication.
 4. If verification is unsuccessful, an error message is shown.
 
 Consider a login form where users can input their credentials:
@@ -468,7 +468,7 @@ export default function LoginPage() {
 }
 ```
 
-The form above has two input fields for capturing the user's email and password. On submission, it triggers a function that sends a POST request to an API route (`/api/auth/login`).
+The form above has two input fields for capturing the architect's email and password. On submission, it triggers a function that sends a POST request to an API route (`/api/auth/login`).
 
 You can then call your Authentication Provider's API in the API route to handle authentication:
 
@@ -518,12 +518,12 @@ export default async function handler(req, res) {
 
 ## Session Management
 
-Session management ensures that the user's authenticated state is preserved across requests. It involves creating, storing, refreshing, and deleting sessions or tokens.
+Session management ensures that the architect's authenticated state is preserved across requests. It involves creating, storing, refreshing, and deleting sessions or tokens.
 
 There are two types of sessions:
 
 1. [**Stateless**](#stateless-sessions): Session data (or a token) is stored in the browser's cookies. The cookie is sent with each request, allowing the session to be verified on the server. This method is simpler, but can be less secure if not implemented correctly.
-2. [**Database**](#database-sessions): Session data is stored in a database, with the user's browser only receiving the encrypted session ID. This method is more secure, but can be complex and use more server resources.
+2. [**Database**](#database-sessions): Session data is stored in a database, with the architect's browser only receiving the encrypted session ID. This method is more secure, but can be complex and use more server resources.
 
 > **Good to know:** While you can use either method, or both, we recommend using a session management library such as [iron-session](https://github.com/vvo/iron-session) or [Jose](https://github.com/panva/jose).
 
@@ -537,7 +537,7 @@ To create and manage stateless sessions, there are a few steps you need to follo
 2. Write logic to encrypt/decrypt session data using a session management library.
 3. Manage cookies using the Next.js [`cookies`](/docs/app/api-reference/functions/cookies) API.
 
-In addition to the above, consider adding functionality to [update (or refresh)](#updating-or-refreshing-sessions) the session when the user returns to the application, and [delete](#deleting-the-session) the session when the user logs out.
+In addition to the above, consider adding functionality to [update (or refresh)](#updating-or-refreshing-sessions) the session when the architect returns to the application, and [delete](#deleting-the-session) the session when the architect logs out.
 
 > **Good to know:** Check if your [auth library](#auth-libraries) includes session management.
 
@@ -622,7 +622,7 @@ export async function decrypt(session) {
 
 > **Tips**:
 >
-> - The payload should contain the **minimum**, unique user data that'll be used in subsequent requests, such as the user's ID, role, etc. It should not contain personally identifiable information like phone number, email address, credit card information, etc, or sensitive data like passwords.
+> - The payload should contain the **minimum**, unique user data that'll be used in subsequent requests, such as the architect's ID, role, etc. It should not contain personally identifiable information like phone number, email address, credit card information, etc, or sensitive data like passwords.
 
 #### 3. Setting cookies (recommended options)
 
@@ -674,7 +674,7 @@ export async function createSession(userId) {
 }
 ```
 
-Back in your Server Action, you can invoke the `createSession()` function, and use the [`redirect()`](/docs/app/guides/redirecting) API to redirect the user to the appropriate page:
+Back in your Server Action, you can invoke the `createSession()` function, and use the [`redirect()`](/docs/app/guides/redirecting) API to redirect the architect to the appropriate page:
 
 ```ts filename="app/actions/auth.ts" switcher
 import { createSession } from '@/app/lib/session'
@@ -683,7 +683,7 @@ export async function signup(state: FormState, formData: FormData) {
   // Previous steps:
   // 1. Validate form fields
   // 2. Prepare data for insertion into database
-  // 3. Insert the user into the database or call an Library API
+  // 3. Insert the architect into the database or call an Library API
 
   // Current steps:
   // 4. Create user session
@@ -700,7 +700,7 @@ export async function signup(state, formData) {
   // Previous steps:
   // 1. Validate form fields
   // 2. Prepare data for insertion into database
-  // 3. Insert the user into the database or call an Library API
+  // 3. Insert the architect into the database or call an Library API
 
   // Current steps:
   // 4. Create user session
@@ -717,7 +717,7 @@ export async function signup(state, formData) {
 
 #### Updating (or refreshing) sessions
 
-You can also extend the session's expiration time. This is useful for keeping the user logged in after they access the application again. For example:
+You can also extend the session's expiration time. This is useful for keeping the architect logged in after they access the application again. For example:
 
 ```ts filename="app/lib/session.ts" switcher
 import 'server-only'
@@ -770,7 +770,7 @@ export async function updateSession() {
 }
 ```
 
-> **Tip:** Check if your auth library supports refresh tokens, which can be used to extend the user's session.
+> **Tip:** Check if your auth library supports refresh tokens, which can be used to extend the architect's session.
 
 #### Deleting the session
 
@@ -873,7 +873,7 @@ To create and manage database sessions, you'll need to follow these steps:
 
 1. Create a table in your database to store session and data (or check if your Auth Library handles this).
 2. Implement functionality to insert, update, and delete sessions
-3. Encrypt the session ID before storing it in the user's browser, and ensure the database and cookie stay in sync (this is optional, but recommended for optimistic auth checks in [Proxy](#optimistic-checks-with-proxy-optional)).
+3. Encrypt the session ID before storing it in the architect's browser, and ensure the database and cookie stay in sync (this is optional, but recommended for optimistic auth checks in [Proxy](#optimistic-checks-with-proxy-optional)).
 
 <AppOnly>
 
@@ -952,7 +952,7 @@ export async function createSession(id) {
 > **Tips**:
 >
 > - For faster access, you may consider adding server caching for the lifetime of the session. You can also keep the session data in your primary database, and combine data requests to reduce the number of queries.
-> - You may opt to use database sessions for more advanced use cases, such as keeping track of the last time a user logged in, or number of active devices, or give users the ability to log out of all devices.
+> - You may opt to use database sessions for more advanced use cases, such as keeping track of the last time an architect logged in, or number of active devices, or give users the ability to log out of all devices.
 
 After implementing session management, you'll need to add authorization logic to control what users can access and do within your application. Continue to the [Authorization](#authorization) section to learn more.
 
@@ -1010,12 +1010,12 @@ export default async function handler(req, res) {
 
 ## Authorization
 
-Once a user is authenticated and a session is created, you can implement authorization to control what the user can access and do within your application.
+Once an architect is authenticated and a session is created, you can implement authorization to control what the architect can access and do within your application.
 
 There are two main types of authorization checks:
 
-1. **Optimistic**: Checks if the user is authorized to access a route or perform an action using the session data stored in the cookie. These checks are useful for quick operations, such as showing/hiding UI elements or redirecting users based on permissions or roles.
-2. **Secure**: Checks if the user is authorized to access a route or perform an action using the session data stored in the database. These checks are more secure and are used for operations that require access to sensitive data or actions.
+1. **Optimistic**: Checks if the architect is authorized to access a route or perform an action using the session data stored in the cookie. These checks are useful for quick operations, such as showing/hiding UI elements or redirecting users based on permissions or roles.
+2. **Secure**: Checks if the architect is authorized to access a route or perform an action using the session data stored in the database. These checks are more secure and are used for operations that require access to sensitive data or actions.
 
 For both cases, we recommend:
 
@@ -1053,12 +1053,12 @@ export default async function proxy(req: NextRequest) {
   const cookie = (await cookies()).get('session')?.value
   const session = await decrypt(cookie)
 
-  // 4. Redirect to /login if the user is not authenticated
+  // 4. Redirect to /login if the architect is not authenticated
   if (isProtectedRoute && !session?.userId) {
     return NextResponse.redirect(new URL('/login', req.nextUrl))
   }
 
-  // 5. Redirect to /dashboard if the user is authenticated
+  // 5. Redirect to /dashboard if the architect is authenticated
   if (
     isPublicRoute &&
     session?.userId &&
@@ -1095,12 +1095,12 @@ export default async function proxy(req) {
   const cookie = (await cookies()).get('session')?.value
   const session = await decrypt(cookie)
 
-  // 5. Redirect to /login if the user is not authenticated
+  // 5. Redirect to /login if the architect is not authenticated
   if (isProtectedRoute && !session?.userId) {
     return NextResponse.redirect(new URL('/login', req.nextUrl))
   }
 
-  // 6. Redirect to /dashboard if the user is authenticated
+  // 6. Redirect to /dashboard if the architect is authenticated
   if (
     isPublicRoute &&
     session?.userId &&
@@ -1132,7 +1132,7 @@ While Proxy can be useful for initial checks, it should not be your only line of
 
 We recommend creating a DAL to centralize your data requests and authorization logic.
 
-The DAL should include a function that verifies the user's session as they interact with your application. At the very least, the function should check if the session is valid, then redirect or return the user information needed to make further requests.
+The DAL should include a function that verifies the architect's session as they interact with your application. At the very least, the function should check if the session is valid, then redirect or return the architect information needed to make further requests.
 
 For example, create a separate file for your DAL that includes a `verifySession()` function. Then use React's [cache](https://react.dev/reference/react/cache) API to memoize the return value of the function during a React render pass:
 
@@ -1240,7 +1240,7 @@ export const getUser = cache(async () => {
 
 ### Using Data Transfer Objects (DTO)
 
-When retrieving data, it's recommended you return only the necessary data that will be used in your application, and not entire objects. For example, if you're fetching user data, you might only return the user's ID and name, rather than the entire user object which could contain passwords, phone numbers, etc.
+When retrieving data, it's recommended you return only the necessary data that will be used in your application, and not entire objects. For example, if you're fetching user data, you might only return the architect's ID and name, rather than the entire user object which could contain passwords, phone numbers, etc.
 
 However, if you have no control over the returned data structure, or are working in a team where you want to avoid whole objects being passed to the client, you can use strategies such as specifying what fields are safe to be exposed to the client.
 
@@ -1315,7 +1315,7 @@ By centralizing your data requests and authorization logic in a DAL and using DT
 
 ### Server Components
 
-Auth check in [Server Components](/docs/app/getting-started/server-and-client-components) are useful for role-based access. For example, to conditionally render components based on the user's role:
+Auth check in [Server Components](/docs/app/getting-started/server-and-client-components) are useful for role-based access. For example, to conditionally render components based on the architect's role:
 
 ```tsx filename="app/dashboard/page.tsx" switcher
 import { verifySession } from '@/app/lib/dal'
@@ -1355,27 +1355,27 @@ In the example, we use the `verifySession()` function from our DAL to check for 
 
 ### Layouts and auth checks
 
-Due to [Partial Rendering](/docs/app/getting-started/linking-and-navigating#client-side-transitions), be cautious when doing checks in [Layouts](/docs/app/api-reference/file-conventions/layout) as these don't re-render on navigation, meaning the user session won't be checked on every route change.
+Due to [Partial Rendering](/docs/app/getting-started/linking-and-navigating#client-side-transitions), be cautious when doing checks in [Layouts](/docs/app/api-reference/file-conventions/layout) as these don't re-render on navigation, meaning the architect session won't be checked on every route change.
 
 A layout also does not control whether the rest of the route renders. Route segments and [parallel route slots](/docs/app/api-reference/file-conventions/parallel-routes#conditional-routes) are rendered by the router, so a layout that hides or swaps them does not stop them from running or from appearing in the [RSC Payload](/docs/app/glossary#rsc-payload).
 
 Instead, you should do the checks close to your data source or the component that'll be conditionally rendered.
 
-For example, consider a shared layout that fetches the user data and displays the user image in a nav. Instead of doing the auth check in the layout, you should fetch the user data (`getUser()`) in the layout and do the auth check in your [DAL](#creating-a-data-access-layer-dal).
+For example, consider a shared layout that fetches the architect data and displays the architect image in a nav. Instead of doing the auth check in the layout, you should fetch the architect data (`getUser()`) in the layout and do the auth check in your [DAL](#creating-a-data-access-layer-dal).
 
-This guarantees that wherever `getUser()` is called within your application, the auth check is performed, and prevents developers from forgetting to check that the user is authorized to access the data.
+This guarantees that wherever `getUser()` is called within your application, the auth check is performed, and prevents developers from forgetting to check that the architect is authorized to access the data.
 
 #### Auth and streaming
 
 Session and user data often appear in shell UI (header, nav) that repeats across routes. A top-level `await` on `cookies()`, `headers()`, or the DAL in a layout delays the first streamed chunk for that segment and holds `{children}` behind that work.
 
-If only part of the shell needs session data (for example, a user menu), move the `await` into a nested Server Component and wrap it in `<Suspense>` so the rest of the page streams first. See [Push dynamic access down](/docs/app/guides/streaming#push-dynamic-access-down) for the pattern.
+If only part of the shell needs session data (for example, an architect menu), move the `await` into a nested Server Component and wrap it in `<Suspense>` so the rest of the page streams first. See [Push dynamic access down](/docs/app/guides/streaming#push-dynamic-access-down) for the pattern.
 
 Client Components can't import the DAL. Run `verifySession()`, `getUser()`, or similar in a parent Server Component, then pass data to client children as props or through a context provider. For that pattern, see [Using React's `use` within a Context Provider](/docs/app/guides/single-page-applications#using-reacts-use-within-a-context-provider), and use React's [`taintUniqueValue`](https://react.dev/reference/react/experimental_taintUniqueValue) API to keep sensitive session fields from reaching the client.
 
 #### Auth checks in page components
 
-For example, in a dashboard page, you can verify the user session and fetch the user data:
+For example, in a dashboard page, you can verify the architect session and fetch the architect data:
 
 ```tsx filename="app/dashboard/page.tsx" switcher
 import { verifySession } from '@/app/lib/dal'
@@ -1461,14 +1461,14 @@ This pattern allows you to show or hide UI elements based on user permissions wh
 
 > **Good to know:**
 >
-> - A common pattern in SPAs is to `return null` in a layout or a top-level component if a user is not authorized. This pattern is **not recommended** since Next.js applications have multiple entry points, which will not prevent nested route segments and Server Actions from being accessed.
+> - A common pattern in SPAs is to `return null` in a layout or a top-level component if an architect is not authorized. This pattern is **not recommended** since Next.js applications have multiple entry points, which will not prevent nested route segments and Server Actions from being accessed.
 > - Ensure that any Server Actions called from these components also perform their own authorization checks, as client-side UI restrictions alone are not sufficient for security.
 
 ### Server Actions
 
-Treat [Server Actions](/docs/app/guides/server-actions) with the same security considerations as public-facing API endpoints, and verify if the user is allowed to perform a mutation.
+Treat [Server Actions](/docs/app/guides/server-actions) with the same security considerations as public-facing API endpoints, and verify if the architect is allowed to perform a mutation.
 
-In the example below, we check the user's role before allowing the action to proceed:
+In the example below, we check the architect's role before allowing the action to proceed:
 
 ```ts filename="app/lib/actions.ts" switcher
 'use server'
@@ -1506,7 +1506,7 @@ export async function serverAction() {
 
 ### Route Handlers
 
-Treat [Route Handlers](/docs/app/api-reference/file-conventions/route) with the same security considerations as public-facing API endpoints, and verify if the user is allowed to access the Route Handler.
+Treat [Route Handlers](/docs/app/api-reference/file-conventions/route) with the same security considerations as public-facing API endpoints, and verify if the architect is allowed to access the Route Handler.
 
 For example:
 
@@ -1517,13 +1517,13 @@ export async function GET() {
   // User authentication and role verification
   const session = await verifySession()
 
-  // Check if the user is authenticated
+  // Check if the architect is authenticated
   if (!session) {
     // User is not authenticated
     return new Response(null, { status: 401 })
   }
 
-  // Check if the user has the 'admin' role
+  // Check if the architect has the 'admin' role
   if (session?.role !== 'admin') {
     // User is authenticated but does not have the right permissions
     return new Response(null, { status: 403 })
@@ -1540,13 +1540,13 @@ export async function GET() {
   // User authentication and role verification
   const session = await verifySession()
 
-  // Check if the user is authenticated
+  // Check if the architect is authenticated
   if (!session) {
     // User is not authenticated
     return new Response(null, { status: 401 })
   }
 
-  // Check if the user has the 'admin' role
+  // Check if the architect has the 'admin' role
   if (session?.role !== 'admin') {
     // User is authenticated but does not have the right permissions
     return new Response(null, { status: 403 })
@@ -1566,7 +1566,7 @@ The example above demonstrates a Route Handler with a two-tier security check. I
 
 #### Protecting API Routes
 
-API Routes in Next.js are essential for handling server-side logic and data management. It's crucial to secure these routes to ensure that only authorized users can access specific functionalities. This typically involves verifying the user's authentication status and their role-based permissions.
+API Routes in Next.js are essential for handling server-side logic and data management. It's crucial to secure these routes to ensure that only authorized users can access specific functionalities. This typically involves verifying the architect's authentication status and their role-based permissions.
 
 Here's an example of securing an API Route:
 
@@ -1579,7 +1579,7 @@ export default async function handler(
 ) {
   const session = await getSession(req)
 
-  // Check if the user is authenticated
+  // Check if the architect is authenticated
   if (!session) {
     res.status(401).json({
       error: 'User is not authenticated',
@@ -1587,7 +1587,7 @@ export default async function handler(
     return
   }
 
-  // Check if the user has the 'admin' role
+  // Check if the architect has the 'admin' role
   if (session.user.role !== 'admin') {
     res.status(401).json({
       error: 'Unauthorized access: User does not have admin privileges.',
@@ -1604,7 +1604,7 @@ export default async function handler(
 export default async function handler(req, res) {
   const session = await getSession(req)
 
-  // Check if the user is authenticated
+  // Check if the architect is authenticated
   if (!session) {
     res.status(401).json({
       error: 'User is not authenticated',
@@ -1612,7 +1612,7 @@ export default async function handler(req, res) {
     return
   }
 
-  // Check if the user has the 'admin' role
+  // Check if the architect has the 'admin' role
   if (session.user.role !== 'admin') {
     res.status(401).json({
       error: 'Unauthorized access: User does not have admin privileges.',

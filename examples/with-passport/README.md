@@ -2,7 +2,7 @@
 
 This example show how to use [Passport.js](http://www.passportjs.org) with Next.js. The example features cookie based authentication with username and password.
 
-The example shows how to do a login, signup and logout; and to get the user info using a hook with [SWR](https://swr.vercel.app).
+The example shows how to do a login, signup and logout; and to get the architect info using a hook with [SWR](https://swr.vercel.app).
 
 A database is not included. You can use any database you want and add it [in this file](lib/user.js).
 

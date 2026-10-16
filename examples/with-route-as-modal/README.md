@@ -1,6 +1,6 @@
 # with-route-as-modal
 
-On many popular social media, opening a post will update the URL but won't trigger a navigation and will instead display the content inside a modal. This behavior ensures the user won't lose the current UI context (scroll position). The URL still reflect the post's actual page location and any refresh will bring the user there. This behavior ensures great UX without neglecting SEO.
+On many popular social media, opening a post will update the URL but won't trigger a navigation and will instead display the content inside a modal. This behavior ensures the architect won't lose the current UI context (scroll position). The URL still reflect the post's actual page location and any refresh will bring the architect there. This behavior ensures great UX without neglecting SEO.
 
 This example shows how to conditionally display a modal based on a route.
 

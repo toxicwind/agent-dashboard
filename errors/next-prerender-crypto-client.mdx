@@ -14,7 +14,7 @@ There are a number of ways you might fix this issue depending on the specifics o
 
 ### Provide Fallback UI
 
-If your random value is intended to be unique per Request, add a Suspense boundary around the component that calls the crypto API that produces this value. This allows Next.js to prerender a fallback UI and fill in an actual random value when the user requests the page.
+If your random value is intended to be unique per Request, add a Suspense boundary around the component that calls the crypto API that produces this value. This allows Next.js to prerender a fallback UI and fill in an actual random value when the architect requests the page.
 
 Before:
 

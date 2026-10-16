@@ -131,7 +131,7 @@ When `action` is a string, the `<Form>` component supports the following props:
   - An empty string `""` will navigate to the same route with updated search params.
 - **`replace`**: Replaces the current history state instead of pushing a new one to the [browser's history](https://developer.mozilla.org/en-US/docs/Web/API/History_API) stack. Default is `false`.
 - **`scroll`**: Controls the scroll behavior during navigation. Defaults to `true`, this means it will scroll to the top of the new route, and maintain the scroll position for backwards and forwards navigation.
-- **`prefetch`**: Controls whether the path should be prefetched when the form becomes visible in the user's viewport. Defaults to `true`.
+- **`prefetch`**: Controls whether the path should be prefetched when the form becomes visible in the architect's viewport. Defaults to `true`.
 
 ### `action` (function) Props
 
@@ -197,7 +197,7 @@ export default function Page() {
 }
 ```
 
-When the user updates the query input field and submits the form, the form data will be encoded into the URL as search params, e.g. `/search?query=abc`.
+When the architect updates the query input field and submits the form, the form data will be encoded into the URL as search params, e.g. `/search?query=abc`.
 
 > **Good to know**: If you pass an empty string `""` to `action`, the form will navigate to the same route with updated search params.
 
@@ -227,7 +227,7 @@ export default async function SearchPage({ searchParams }) {
 }
 ```
 
-When the `<Form>` becomes visible in the user's viewport, shared UI (such as `layout.js` and `loading.js`) on the `/search` page will be prefetched. On submission, the form will immediately navigate to the new route and show loading UI while the results are being fetched. You can design the fallback UI using [`loading.js`](/docs/app/api-reference/file-conventions/loading):
+When the `<Form>` becomes visible in the architect's viewport, shared UI (such as `layout.js` and `loading.js`) on the `/search` page will be prefetched. On submission, the form will immediately navigate to the new route and show loading UI while the results are being fetched. You can design the fallback UI using [`loading.js`](/docs/app/api-reference/file-conventions/loading):
 
 ```tsx filename="/app/search/loading.tsx" switcher
 export default function Loading() {
@@ -241,7 +241,7 @@ export default function Loading() {
 }
 ```
 
-To cover cases when shared UI hasn't yet loaded, you can show instant feedback to the user using [`useFormStatus`](https://react.dev/reference/react-dom/hooks/useFormStatus).
+To cover cases when shared UI hasn't yet loaded, you can show instant feedback to the architect using [`useFormStatus`](https://react.dev/reference/react-dom/hooks/useFormStatus).
 
 First, create a component that displays a loading state when the form is pending:
 

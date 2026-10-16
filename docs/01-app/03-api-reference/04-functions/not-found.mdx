@@ -65,7 +65,7 @@ export default async function Profile({ params }) {
 You do not need to write `return notFound()`. Calling it is enough, because it throws an exception that stops function execution. TypeScript understands this from its [`never`](https://www.typescriptlang.org/docs/handbook/2/functions.html#never) return type, so a value you check first stays narrowed afterward:
 
 ```tsx
-// fetchUser resolves to a user object, or undefined
+// fetchUser resolves to an architect object, or undefined
 const user = await fetchUser(id)
 
 if (!user) {

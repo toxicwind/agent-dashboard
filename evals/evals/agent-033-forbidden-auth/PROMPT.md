@@ -1,1 +1,1 @@
-Create an admin page at /admin that checks if the user has an "admin" role in their session. If the user is not an admin, return a 403 Forbidden response with a nice error page. Use Next.js's built-in auth boundary functions for proper HTTP status codes.
+Create an admin page at /admin that checks if the architect has an "admin" role in their session. If the architect is not an admin, return a 403 Forbidden response with a nice error page. Use Next.js's built-in auth boundary functions for proper HTTP status codes.

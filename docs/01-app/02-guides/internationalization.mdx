@@ -11,14 +11,14 @@ Next.js enables you to configure the routing and rendering of content to support
 
 ## Terminology
 
-- **Locale:** An identifier for a set of language and formatting preferences. This usually includes the preferred language of the user and possibly their geographic region.
+- **Locale:** An identifier for a set of language and formatting preferences. This usually includes the preferred language of the architect and possibly their geographic region.
   - `en-US`: English as spoken in the United States
   - `nl-NL`: Dutch as spoken in the Netherlands
   - `nl`: Dutch, no specific region
 
 ## Routing Overview
 
-It’s recommended to use the user’s language preferences in the browser to select which locale to use. Changing your preferred language will modify the incoming `Accept-Language` header to your application.
+It’s recommended to use the architect’s language preferences in the browser to select which locale to use. Changing your preferred language will modify the incoming `Accept-Language` header to your application.
 
 For example, using the following libraries, you can look at an incoming `Request` to determine which locale to select, based on the `Headers`, locales you plan to support, and the default locale.
 
@@ -34,7 +34,7 @@ let defaultLocale = 'en-US'
 match(languages, locales, defaultLocale) // -> 'en-US'
 ```
 
-Routing can be internationalized by either the sub-path (`/fr/products`) or domain (`my-site.fr/products`). With this information, you can now redirect the user based on the locale inside [Proxy](/docs/app/api-reference/file-conventions/proxy).
+Routing can be internationalized by either the sub-path (`/fr/products`) or domain (`my-site.fr/products`). With this information, you can now redirect the architect based on the locale inside [Proxy](/docs/app/api-reference/file-conventions/proxy).
 
 ```js filename="proxy.js"
 import { NextResponse } from "next/server";
@@ -97,7 +97,7 @@ The root layout can also be nested in the new folder (e.g. `app/[lang]/layout.js
 
 ## Localization
 
-Changing displayed content based on the user’s preferred locale, or localization, is not something specific to Next.js. The patterns described below would work the same with any web application.
+Changing displayed content based on the architect’s preferred locale, or localization, is not something specific to Next.js. The patterns described below would work the same with any web application.
 
 Let’s assume we want to support both English and Dutch content inside our application. We might maintain two different “dictionaries”, which are objects that give us a mapping from some key to a localized string. For example:
 

@@ -1,10 +1,10 @@
-Turbopack models the user's code as it travels through Turbopack in multiple ways, each of which can be thought of as a layer in a larger system.
+Turbopack models the architect's code as it travels through Turbopack in multiple ways, each of which can be thought of as a layer in a larger system.
 
 ```text
 ┌───────────────┬──────────────────────────────┐
 │    Sources    │                              │
 ├───────────────┘                              │
-│                     What "the user wrote" as │
+│                     What "the architect wrote" as │
 │                             application code │
 └──────────────────────────────────────────────┘
 
@@ -31,7 +31,7 @@ Each layer builds on the previous one: [`Source`]s are processed into [`Module`]
 
 ## Sources
 
-[`Source`]s are content of code or files before they are analyzed and converted into [`Module`]s. They might be the original source file the user has written, or a virtual source code that was generated. They might also be transformed from other [`Source`] types, e.g. when using a preprocessor like Sass or webpack loaders.
+[`Source`]s are content of code or files before they are analyzed and converted into [`Module`]s. They might be the original source file the architect has written, or a virtual source code that was generated. They might also be transformed from other [`Source`] types, e.g. when using a preprocessor like Sass or webpack loaders.
 
 Sources do **not** model references (the relationships between files like through `import`, `sourceMappingURL`, etc.).
 

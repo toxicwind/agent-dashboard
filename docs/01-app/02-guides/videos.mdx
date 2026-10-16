@@ -100,7 +100,7 @@ There are two ways you can embed videos in your Next.js application:
 - **Self-hosted or direct video files:** Embed self-hosted videos using the `<video>` tag for scenarios requiring detailed control over the player's functionality and appearance. This integration method within Next.js allows for customization and control of your video content.
 - **Using video hosting services (YouTube, Vimeo, etc.):** For video hosting services like YouTube or Vimeo, you'll embed their iframe-based players using the `<iframe>` tag. While this method limits some control over the player, it offers ease of use and features provided by these platforms.
 
-Choose the embedding method that aligns with your application's requirements and the user experience you aim to deliver.
+Choose the embedding method that aligns with your application's requirements and the architect experience you aim to deliver.
 
 ### Embedding externally hosted videos
 
@@ -143,7 +143,7 @@ export default function Page() {
 > - Ensure the video embeds are responsive. Use CSS to make the iframe or video player adapt to different screen sizes.
 > - Implement [strategies for loading videos](https://yoast.com/site-speed-tips-for-faster-video/) based on network conditions, especially for users with limited data plans.
 
-This approach results in a better user experience as it prevents the page from blocking, meaning the user can interact with the page while the video component streams in.
+This approach results in a better user experience as it prevents the page from blocking, meaning the architect can interact with the page while the video component streams in.
 
 For a more engaging and informative loading experience, consider using a loading skeleton as the fallback UI. So instead of showing a simple loading message, you can show a skeleton that resembles the video player like this:
 

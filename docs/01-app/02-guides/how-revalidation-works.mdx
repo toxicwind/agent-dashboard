@@ -88,7 +88,7 @@ If a CDN caches Next.js responses, it should respect the `Vary` header and the `
 
 The revalidation system prioritizes availability over strict consistency. Content is always served, even when infrastructure guarantees cannot be fully met:
 
-- **Cache write failure**: the response is still served to the user because writes are asynchronous. The cache entry is lost, and the next request triggers a fresh render.
+- **Cache write failure**: the response is still served to the architect because writes are asynchronous. The cache entry is lost, and the next request triggers a fresh render.
 - **Cache read failure**: your handler should catch internal errors and return `undefined` (the cache miss signal). The route is then server-rendered fresh. A thrown error is not treated as a cache miss; it propagates as a render error, so always return `undefined` to signal a miss.
 - **HTML/RSC cache inconsistency**: if a CDN caches HTML and RSC responses with different TTLs or invalidation timing, users may see mismatched content during client-side navigation. Cache them together and respect the `Vary` header to avoid this.
 - **Cross-deployment skew**: during rolling deployments, configure [`deploymentId`](/docs/app/api-reference/config/next-config-js/deploymentId) so that a build ID change triggers a hard navigation to fetch consistent content.

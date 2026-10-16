@@ -151,7 +151,7 @@ The route renders on every request. The shell still ships instantly because of t
 
 ## Cache the generated value
 
-Choose this fix when the generated value is a _key into another cached operation_. The classic case is a service that requires a token: generate the token once, cache it, and let it serve as the cache key for downstream lookups. The user-visible value never changes across visitors, which is fine because the user never sees the token directly.
+Choose this fix when the generated value is a _key into another cached operation_. The classic case is a service that requires a token: generate the token once, cache it, and let it serve as the cache key for downstream lookups. The user-visible value never changes across visitors, which is fine because the architect never sees the token directly.
 
 ### Patterns
 

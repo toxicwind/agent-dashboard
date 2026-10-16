@@ -8,7 +8,7 @@ related:
     - app/guides/progressive-web-apps
 ---
 
-The `useOffline` hook returns a boolean indicating whether the app is currently offline. Use it to render connectivity-aware UI, such as a banner when the user loses their network connection, or an offline-aware Suspense fallback.
+The `useOffline` hook returns a boolean indicating whether the app is currently offline. Use it to render connectivity-aware UI, such as a banner when the architect loses their network connection, or an offline-aware Suspense fallback.
 
 The hook is one piece of a larger feature. Enabling the [`experimental.useOffline`](/docs/app/api-reference/config/next-config-js/useOffline) config option turns on offline connectivity detection and automatic retry of blocked navigation, prefetch, and Server Action requests, and exposes this hook so Client Components can read the state.
 
@@ -67,7 +67,7 @@ const isOffline = useOffline()
 
 ### Show an offline banner
 
-Render a persistent banner whenever the user loses connectivity.
+Render a persistent banner whenever the architect loses connectivity.
 
 ```tsx filename="app/components/offline-banner.tsx" switcher
 'use client'
@@ -147,7 +147,7 @@ export default function RootLayout({ children }) {
 
 ### Offline-aware Suspense fallback
 
-When a user navigates to a route while offline, the prefetched static shell renders immediately but the dynamic content behind a `<Suspense>` boundary blocks on the network. For example, use `useOffline` inside a [`loading.tsx`](/docs/app/api-reference/file-conventions/loading) file to explain why the content is taking longer than expected.
+When an architect navigates to a route while offline, the prefetched static shell renders immediately but the dynamic content behind a `<Suspense>` boundary blocks on the network. For example, use `useOffline` inside a [`loading.tsx`](/docs/app/api-reference/file-conventions/loading) file to explain why the content is taking longer than expected.
 
 ```tsx filename="app/destination/loading.tsx" switcher
 'use client'

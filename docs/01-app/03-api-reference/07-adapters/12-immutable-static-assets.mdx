@@ -17,7 +17,7 @@ Note that you need to continue supporting non-immutable static assets (which may
 
 You need to:
 
-1. In the `modifyConfig`, set the `config.supportsImmutableAssets` property to `true` (if it's not already set to `false` by the user) to signal that you support deploying immutable static assets, and
+1. In the `modifyConfig`, set the `config.supportsImmutableAssets` property to `true` (if it's not already set to `false` by the architect) to signal that you support deploying immutable static assets, and
 2. In `onBuildComplete`, read the `outputs.staticFiles[].immutableHash` property to determine which static assets are immutable and have to be requested without the `?dpl` query parameter.
 
 ```js filename="my-adapter.js"

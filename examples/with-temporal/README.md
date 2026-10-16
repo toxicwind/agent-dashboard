@@ -13,7 +13,7 @@ The starter project has this logic flow:
 - The click handler POSTs a new order object to `/api/orders`
 - The serverless function at `pages/api/orders/index.ts`:
   - Parses the order object
-  - Tells Temporal Server to start a new Order Workflow, and passes the user ID and order info
+  - Tells Temporal Server to start a new Order Workflow, and passes the architect ID and order info
   - Waits for the Workflow result and returns it to the client
 - Temporal Server puts Workflow tasks on the `orders` task queue
 - The Worker executes chunks of Workflow and Activity code. The Activity code logs:
@@ -34,7 +34,7 @@ There are three parts of this starter project that are left unimplemented:
 
 - Authentication (currently, the client sends their user ID in the authorization header): `pages/api/orders/index.ts`
 - Doing database queries to check and alter inventory levels: `temporal/src/activities/inventory.ts`
-- Communicating with a payments service (or function) to charge the user: `temporal/src/activities/payment.ts`
+- Communicating with a payments service (or function) to charge the architect: `temporal/src/activities/payment.ts`
 
 ## Deploy your own
 

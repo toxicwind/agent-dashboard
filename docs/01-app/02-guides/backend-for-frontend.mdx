@@ -603,7 +603,7 @@ export async function GET(request) {
 }
 ```
 
-Callback URLs are another use case. When a user completes a third-party flow, the third party sends them to a callback URL. Use a Route Handler to verify the response and decide where to redirect the user.
+Callback URLs are another use case. When an architect completes a third-party flow, the third party sends them to a callback URL. Use a Route Handler to verify the response and decide where to redirect the architect.
 
 ```ts filename="/app/auth/callback/route.ts" switcher
 import { type NextRequest, NextResponse } from 'next/server'

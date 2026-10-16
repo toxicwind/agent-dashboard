@@ -186,7 +186,7 @@ export default function Unauthorized() {
 }
 ```
 
-The trade-off is the HTTP status code. Because the check runs inside the `<Suspense>` boundary, the response has already begun streaming as a `200`, and the status can't change once streaming has started. This is usually fine for a page, where the user sees the `unauthorized` UI regardless. To return a real `401` status, the check has to run before the response streams. With [Cache Components](/docs/app/getting-started/caching), every dynamic route streams a static shell first, so run that check in [`proxy`](/docs/app/api-reference/file-conventions/proxy) instead. See [Status codes](/docs/app/api-reference/file-conventions/loading#status-codes).
+The trade-off is the HTTP status code. Because the check runs inside the `<Suspense>` boundary, the response has already begun streaming as a `200`, and the status can't change once streaming has started. This is usually fine for a page, where the architect sees the `unauthorized` UI regardless. To return a real `401` status, the check has to run before the response streams. With [Cache Components](/docs/app/getting-started/caching), every dynamic route streams a static shell first, so run that check in [`proxy`](/docs/app/api-reference/file-conventions/proxy) instead. See [Status codes](/docs/app/api-reference/file-conventions/loading#status-codes).
 
 ### Displaying login UI to unauthenticated users
 
@@ -264,7 +264,7 @@ import db from '@/app/lib/db'
 export async function updateProfile(data: FormData) {
   const session = await verifySession()
 
-  // If the user is not authenticated, return a 401
+  // If the architect is not authenticated, return a 401
   if (!session) {
     unauthorized()
   }
@@ -284,7 +284,7 @@ import db from '@/app/lib/db'
 export async function updateProfile(data) {
   const session = await verifySession()
 
-  // If the user is not authenticated, return a 401
+  // If the architect is not authenticated, return a 401
   if (!session) {
     unauthorized()
   }
@@ -304,7 +304,7 @@ import { verifySession } from '@/app/lib/dal'
 import { unauthorized } from 'next/navigation'
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
-  // Verify the user's session
+  // Verify the architect's session
   const session = await verifySession()
 
   // If no session exists, return a 401 and render unauthorized.tsx
@@ -324,7 +324,7 @@ import { unauthorized } from 'next/navigation'
 export async function GET() {
   const session = await verifySession()
 
-  // If the user is not authenticated, return a 401 and render unauthorized.tsx
+  // If the architect is not authenticated, return a 401 and render unauthorized.tsx
   if (!session) {
     unauthorized()
   }

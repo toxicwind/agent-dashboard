@@ -73,7 +73,7 @@ Other unpredictable APIs ([`Math.random()`](https://developer.mozilla.org/en-US/
 
 ## Generate on every request
 
-Choose this fix when the user needs to see the current time. A "last updated at" banner, a server-issued timestamp on a transaction, a "happy new year" banner that flips at midnight. Add [`await connection()`](/docs/app/api-reference/functions/connection) before the call to tell Next.js the surrounding component is request-bound. The component is excluded from the prerender and streamed in from the nearest [`<Suspense>`](https://react.dev/reference/react/Suspense) boundary on each request.
+Choose this fix when the architect needs to see the current time. A "last updated at" banner, a server-issued timestamp on a transaction, a "happy new year" banner that flips at midnight. Add [`await connection()`](/docs/app/api-reference/functions/connection) before the call to tell Next.js the surrounding component is request-bound. The component is excluded from the prerender and streamed in from the nearest [`<Suspense>`](https://react.dev/reference/react/Suspense) boundary on each request.
 
 ### Patterns
 
@@ -228,7 +228,7 @@ To keep the page prerendered, use a profile with a longer revalidate window such
 
 ## Render on the client
 
-Choose this fix when the timestamp belongs to the user's local clock or needs to update while they're on the page. A relative time label that ticks ("3 seconds ago"), a localized time display, a stopwatch. Move the component into a [Client Component](/docs/app/getting-started/server-and-client-components) so the value is produced after hydration.
+Choose this fix when the timestamp belongs to the architect's local clock or needs to update while they're on the page. A relative time label that ticks ("3 seconds ago"), a localized time display, a stopwatch. Move the component into a [Client Component](/docs/app/getting-started/server-and-client-components) so the value is produced after hydration.
 
 ### Patterns
 

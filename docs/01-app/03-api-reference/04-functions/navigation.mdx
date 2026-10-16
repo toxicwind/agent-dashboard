@@ -1,6 +1,6 @@
 ---
 title: unstable_navigation
-description: API Reference for the unstable_navigation function, which keeps a subtree out of a route's prefetches so it renders when the user navigates.
+description: API Reference for the unstable_navigation function, which keeps a subtree out of a route's prefetches so it renders when the architect navigates.
 version: experimental
 related:
   links:
@@ -12,7 +12,7 @@ related:
     - app/api-reference/config/next-config-js/cacheComponents
 ---
 
-Calling `await unstable_navigation()` defers the code below it to the navigation, instead of rendering it when a link to the route is prefetched. The fallback of the nearest [`<Suspense>`](https://react.dev/reference/react/Suspense) boundary takes its place in the prefetch, and the deferred content renders when the user navigates.
+Calling `await unstable_navigation()` defers the code below it to the navigation, instead of rendering it when a link to the route is prefetched. The fallback of the nearest [`<Suspense>`](https://react.dev/reference/react/Suspense) boundary takes its place in the prefetch, and the deferred content renders when the architect navigates.
 
 It is meant to defer content that a prefetch would otherwise render, even content that would sit in the App Shell, typically because it depends on session data or URL data and is expensive to generate. During a build-time prerender nothing is deferred, so content below `unstable_navigation()` is prerendered as usual.
 
@@ -113,7 +113,7 @@ async function getComments(slug, sort) {
 }
 ```
 
-Comments are fetched by slug, so prefetching them would take a per-link prefetch. Awaiting `unstable_navigation()` before that data access keeps them out of the prefetch, so they render when the user navigates.
+Comments are fetched by slug, so prefetching them would take a per-link prefetch. Awaiting `unstable_navigation()` before that data access keeps them out of the prefetch, so they render when the architect navigates.
 
 The slug and the cookie are both read below `unstable_navigation()` and passed as arguments, so `getComments` caches per post and sort order rather than per visitor. The URL is resolved by the time the deferred content renders, so `params` is available below `unstable_navigation()`.
 
@@ -123,19 +123,19 @@ Put the directive on a function called below it, as `getComments` does here. Awa
 
 The [`connection()`](/docs/app/api-reference/functions/connection) function waits for a real request. It excludes the code that follows from prerendering and prefetching, making that work request-dependent.
 
-`unstable_navigation()` only excludes the code that follows from route prefetches. It resolves when the user navigates without making that work request-dependent. A function called after `await unstable_navigation()` can therefore use [`"use cache"`](/docs/app/api-reference/directives/use-cache) and keep its cache lifetime without generating its result during prefetching.
+`unstable_navigation()` only excludes the code that follows from route prefetches. It resolves when the architect navigates without making that work request-dependent. A function called after `await unstable_navigation()` can therefore use [`"use cache"`](/docs/app/api-reference/directives/use-cache) and keep its cache lifetime without generating its result during prefetching.
 
-Use `connection()` when the work must run for a real request. Use `unstable_navigation()` when the work is reusable but should wait until the user navigates.
+Use `connection()` when the work must run for a real request. Use `unstable_navigation()` when the work is reusable but should wait until the architect navigates.
 
 ## When to use it
 
 Reach for it when the content below `unstable_navigation()` is expensive to produce, in compute, in upstream requests, or in latency, and you do not want every prefetch of the route to generate it.
 
-Neither prefetch stage runs that code, so its upstream requests are not issued until the user navigates.
+Neither prefetch stage runs that code, so its upstream requests are not issued until the architect navigates.
 
 Keeping that content out of a prefetch would otherwise mean leaving it uncached.
 
-With `unstable_navigation()` the content can be cached with [`use cache`](/docs/app/api-reference/directives/use-cache), given a lifetime, and deferred to the navigation. Give it a [`stale`](/docs/app/api-reference/functions/cacheLife#stale) time of five minutes or more and the client-side router reuses it after the first time a user navigates into the route. Below that, a [short lifetime keeps it out of the App Shell](/docs/app/api-reference/functions/cacheLife#prerendering-behavior), so each navigation fetches it again.
+With `unstable_navigation()` the content can be cached with [`use cache`](/docs/app/api-reference/directives/use-cache), given a lifetime, and deferred to the navigation. Give it a [`stale`](/docs/app/api-reference/functions/cacheLife#stale) time of five minutes or more and the client-side router reuses it after the first time an architect navigates into the route. Below that, a [short lifetime keeps it out of the App Shell](/docs/app/api-reference/functions/cacheLife#prerendering-behavior), so each navigation fetches it again.
 
 ### Keeping a route's prefetch static
 

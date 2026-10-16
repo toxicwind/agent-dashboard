@@ -197,7 +197,7 @@ export default function Component({ children }) {
 
 <AppOnly>
 
-Use `retry()` to prompt the user to recover from the error. When called, the function re-fetches and re-renders the error boundary's children. If successful, the fallback is replaced with the re-rendered result.
+Use `retry()` to prompt the architect to recover from the error. When called, the function re-fetches and re-renders the error boundary's children. If successful, the fallback is replaced with the re-rendered result.
 
 In most cases, use `retry()` instead of `reset()`. The `reset()` function only clears the error state and re-renders without re-fetching, which means it won't recover from Server Component errors.
 
@@ -241,7 +241,7 @@ export default catchError(ErrorFallback)
 
 <PagesOnly>
 
-Use `reset()` to prompt the user to recover from the error. When called, the function clears the error state and re-renders the error boundary's children.
+Use `reset()` to prompt the architect to recover from the error. When called, the function clears the error state and re-renders the error boundary's children.
 
 ```tsx filename="components/custom-error-boundary.tsx" switcher
 import { catchError, type ErrorInfo } from 'next/error'

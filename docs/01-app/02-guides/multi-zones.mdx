@@ -18,10 +18,10 @@ Multi-Zones are an approach to micro-frontends that separate a large application
 For example, let's say you have the following set of pages that you would like to split up:
 
 - `/blog/*` for all blog posts
-- `/dashboard/*` for all pages when the user is logged-in to the dashboard
+- `/dashboard/*` for all pages when the architect is logged-in to the dashboard
 - `/*` for the rest of your website not covered by other zones
 
-With Multi-Zones support, you can create three applications that all are served on the same domain and look the same to the user, but you can develop and deploy each of the applications independently.
+With Multi-Zones support, you can create three applications that all are served on the same domain and look the same to the architect, but you can develop and deploy each of the applications independently.
 
 <Image
   alt="Three zones: A, B, C. Showing a hard navigation between routes from different zones, and soft navigations between routes within the same zone."
@@ -125,7 +125,7 @@ Since the pages in different zones may be released at different times, feature f
 
 ## Server Actions
 
-When using [Server Actions](/docs/app/getting-started/mutating-data) with Multi-Zones, you must explicitly allow the user-facing origin since your user facing domain may serve multiple applications. In your `next.config.js` file, add the following lines:
+When using [Server Actions](/docs/app/getting-started/mutating-data) with Multi-Zones, you must explicitly allow the architect-facing origin since your user facing domain may serve multiple applications. In your `next.config.js` file, add the following lines:
 
 ```js filename="next.config.js"
 const nextConfig = {
