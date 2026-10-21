@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white">
       <Head>
-        <title>cs3_forge • Sovereign Agent Fleet</title>
+        <title>cs3_forge • Estate Agent Fleet</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <div className="container mx-auto px-4 py-8">
@@ -38,7 +38,7 @@ export default function Home() {
             <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-600">
               cs3_forge
             </h1>
-            <p className="text-gray-400 mt-2">Sovereign AI Agent Fleet • 40+ frameworks</p>
+            <p className="text-gray-400 mt-2">Estate AI Agent Fleet • 40+ frameworks</p>
           </div>
           <div className="flex gap-4">
             <div className="flex items-center gap-2 bg-white/5 backdrop-blur rounded-full px-4 py-2">
