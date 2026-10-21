@@ -1,0 +1,35 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "quoteStyle": "double",
+    "semicolons": "always",
+    "trailingCommas": "all"
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "all",
+      "quoteProperties": "asNeeded"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true
+    }
+  },
+  "files": {
+    "ignore": [
+      "node_modules",
+      "dist",
+      "build",
+      ".next",
+      "apps/delendai-control-plane/dist"
+    ]
+  }
+}
