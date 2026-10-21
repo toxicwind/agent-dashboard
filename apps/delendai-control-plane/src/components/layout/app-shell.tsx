@@ -6,6 +6,7 @@ import { DashboardPage } from '@/components/dashboard/dashboard-page'
 import { ProvidersPage } from '@/components/providers/providers-page'
 import { RouterPage } from '@/components/router/router-page'
 import { ChatsPage } from '@/components/chats/chats-page'
+import { DashboardsPage } from '@/components/dashboards/dashboards-page'
 
 export function App() {
   const { meta } = useControlPlane()
@@ -21,6 +22,7 @@ export function App() {
             <Route path="/providers" element={<ProvidersPage />} />
             <Route path="/router" element={<RouterPage />} />
             <Route path="/chats" element={<ChatsPage />} />
+            <Route path="/dashboards" element={<DashboardsPage />} />
           </Routes>
         </main>
       </div>

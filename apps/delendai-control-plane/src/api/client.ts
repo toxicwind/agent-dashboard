@@ -1,25 +1,21 @@
-import {
-  PROVIDER_STATUS_FIXTURES,
-  ROUTER_USAGE_FIXTURES,
-} from '@/data/provider-record'
-import { SERVICES_FIXTURES } from '@/data/services'
-import { channelStub } from '@/data/channels'
 import type {
   IChatChannel,
+  IDashboardLink,
+  IDashboardsModel,
   IProviderStatusReadyModel,
   IRouterUsageRow,
   IServiceRow,
 } from '@/types'
 
 /**
- * api — typed fetch over the DelendAI control-plane API. Degrades gracefully:
- * when the API is unreachable (no VITE_CONTROL_API server yet), the caller
- * falls back to its local fixture model so the dashboard always renders.
+ * api — typed fetch over the DelendAI control-plane API. There are NO fixture
+ * fallbacks: every getter degrades to a truthful empty/error state — never
+ * fabricated rows — so the dashboard renders only REAL estate data.
  */
 
 export const DEFAULT_CONTROL_API =
   (import.meta.env.VITE_CONTROL_API as string | undefined) ??
-  'http://127.0.0.1:25100/v1'
+  'http://127.0.0.1:25162'
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' }
 
@@ -40,22 +36,31 @@ async function getJson<T>(url: string, timeoutMs = 4000): Promise<T> {
   }
 }
 
-/** Fetch providers; on failure return the frozen showcase fixture. */
+/** Fetch real providers; on an unreachable API return a truthful empty model. */
 export async function fetchProviders(
   base = DEFAULT_CONTROL_API,
   timeoutMs = 4000
-): Promise<IProviderStatusReadyModel> {
+): Promise<IProviderStatusReadyModel | null> {
+  const empty: IProviderStatusReadyModel = {
+    kind: 'ready',
+    checkedAt: new Date().toISOString(),
+    summary: { total: 0, available: 0, unavailable: 0 },
+    emptyRoster: true,
+    rows: [],
+    quota: { present: false, updatedAt: null, note: 'API unreachable' },
+  }
   try {
-    return await getJson<IProviderStatusReadyModel>(
+    const model = await getJson<IProviderStatusReadyModel>(
       `${base}/providers`,
       timeoutMs
     )
+    return model?.kind === 'ready' ? model : empty
   } catch {
-    return PROVIDER_STATUS_FIXTURES
+    return empty
   }
 }
 
-/** Fetch services; on failure return the live-spot fixture grid. */
+/** Fetch real services; on failure return a truthful empty list (no fixtures). */
 export async function fetchServices(
   base = DEFAULT_CONTROL_API,
   timeoutMs = 4000
@@ -65,24 +70,34 @@ export async function fetchServices(
       `${base}/services`,
       timeoutMs
     )
-    return Array.isArray(rows) && rows.length > 0 ? rows : SERVICES_FIXTURES
+    return Array.isArray(rows) ? rows : []
   } catch {
-    return SERVICES_FIXTURES
+    return []
   }
 }
 
-/** Fetch router usage/cost; on failure return the showcase rows. */
+/** Fetch real router usage; an empty body is a truthful "no data yet" state. */
 export async function fetchRouterUsage(
   base = DEFAULT_CONTROL_API,
   timeoutMs = 4000
-): Promise<readonly IRouterUsageRow[]> {
+): Promise<{
+  present: boolean
+  rows: readonly IRouterUsageRow[]
+  note: string | null
+}> {
+  const none = { present: false, rows: [], note: 'no real usage data' }
   try {
-    return await getJson<readonly IRouterUsageRow[]>(
-      `${base}/router/usage`,
-      timeoutMs
-    )
+    const body = await getJson<{
+      present: boolean
+      rows?: readonly IRouterUsageRow[]
+      note?: string | null
+    }>(`${base}/router/usage`, timeoutMs)
+    if (body && body.present && Array.isArray(body.rows)) {
+      return { present: true, rows: body.rows, note: body.note ?? null }
+    }
+    return { present: false, rows: [], note: body?.note ?? none.note }
   } catch {
-    return ROUTER_USAGE_FIXTURES as readonly IRouterUsageRow[]
+    return none
   }
 }
 
@@ -101,7 +116,7 @@ export async function pingControlApi(
   }
 }
 
-/** Fetch kappa chat channels; on absence of the API, fall back to a stub. */
+/** Fetch real kappa channels; a missing/empty root is a truthful empty list. */
 export async function fetchChannels(
   base = DEFAULT_CONTROL_API,
   timeoutMs = 4000
@@ -111,8 +126,24 @@ export async function fetchChannels(
       `${base}/channels`,
       timeoutMs
     )
-    return Array.isArray(rows) && rows.length > 0 ? rows : channelStub()
+    return Array.isArray(rows) ? rows : []
   } catch {
-    return channelStub()
+    return []
+  }
+}
+
+/** Fetch the real estate dashboard registry; an empty list when unreachable. */
+export async function fetchDashboards(
+  base = DEFAULT_CONTROL_API,
+  timeoutMs = 4000
+): Promise<readonly IDashboardLink[] | null> {
+  try {
+    const model = await getJson<IDashboardsModel>(
+      `${base}/dashboards`,
+      timeoutMs
+    )
+    return model?.dashboards ?? []
+  } catch {
+    return []
   }
 }

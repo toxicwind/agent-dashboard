@@ -109,6 +109,22 @@ export interface IChatChannel {
   readonly messages: readonly IChatMessage[]
 }
 
+// ─── Real estate dashboards registry ────────────────────────────────────────
+export interface IDashboardLink {
+  readonly id: string
+  readonly name: string
+  readonly url: string
+  readonly note: string
+  readonly live: boolean
+  readonly status: number | null
+}
+
+export interface IDashboardsModel {
+  readonly generatedAt: string
+  readonly source: string
+  readonly dashboards: readonly IDashboardLink[]
+}
+
 // ─── Control-plane overall model ────────────────────────────────────────────
 export interface IControlPlaneModel {
   readonly providers: IProviderStatusReadyModel
