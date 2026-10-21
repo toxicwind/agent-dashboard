@@ -16,24 +16,24 @@
  * Every getter degrades gracefully when a source is absent or unreachable.
  */
 
-import type { IChatMessage, IChatChannel } from '@/types'
+import type { IChatChannel } from '@/types'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 export interface UnifiedChatSession {
-  readonly id: string
-  readonly source: 'tau' | 'kappa' | 'kimi'
-  readonly title: string
-  readonly lastActivity: string | null
-  readonly messageCount: number
-  readonly preview: string
+  id: string
+  source: 'tau' | 'kappa' | 'kimi'
+  title: string
+  lastActivity: string | null
+  messageCount: number
+  preview: string
 }
 
 export interface UnifiedChatsResult {
-  readonly sessions: UnifiedChatSession[]
-  readonly summary: {
-    readonly total: number
-    readonly bySource: { tau: number; kappa: number; kimi: number }
+  sessions: UnifiedChatSession[]
+  summary: {
+    total: number
+    bySource: { tau: number; kappa: number; kimi: number }
   }
 }
 
@@ -44,7 +44,9 @@ export const DEFAULT_TAU_SESSIONS_ROOT =
 
 function tauSessionFromPath(
   filename: string,
-  firstLine: string | null
+  firstLine: string | null,
+  mtimeMs: number,
+  lineCount: number
 ): UnifiedChatSession {
   // Filename pattern: <agent>-<seed>-<title>.jsonl or <title>.jsonl
   const name = filename.replace(/\.jsonl$/, '')
@@ -52,22 +54,24 @@ function tauSessionFromPath(
   const parts = name.split('-')
   let title = name
   // Heuristic: if it looks like "agent-seed-title" (seed = digits), take from third part
-  if (parts.length >= 3 && /\d{3,8}/.test(parts[1]) && /^\d+$/.test(parts[1])) {
+  if (
+    parts.length >= 3 &&
+    /^\d+$/.test(parts[1]) &&
+    parts[1].length >= 3 &&
+    parts[1].length <= 8
+  ) {
     title = parts.slice(2).join('-')
   }
   // Humanise: replace hyphens/underscores with spaces
   title = title.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 
-  const preview = firstLine
-    ? firstLine.slice(0, 160)
-    : `Session ${name}`
   return {
     id: name,
     source: 'tau',
     title,
-    lastActivity: null, // parsed from file mtime or JSONL lines
-    messageCount: 1, // at least 1 line = 1 message
-    preview,
+    lastActivity: new Date(mtimeMs).toISOString(),
+    messageCount: Math.max(1, lineCount),
+    preview: firstLine ? firstLine.slice(0, 160) : `Session ${name}`,
   }
 }
 
@@ -93,28 +97,17 @@ export async function loadTauSessions(
 
     let firstLine: string | null = null
     let mtimeMs = 0
+    let lineCount = 0
     try {
       const raw = await io.readFile(`${root}/${entry}`)
       firstLine = raw.split('\n', 1)[0] ?? null
-      const stats = await io.stat(`${root}/${entry}`)
-      mtimeMs = stats.mtimeMs
+      mtimeMs = (await io.stat(`${root}/${entry}`)).mtimeMs
+      lineCount = raw.split('\n').filter((l) => l.trim()).length
     } catch {
       continue
     }
 
-    const session = tauSessionFromPath(entry, firstLine)
-    session.lastActivity = new Date(mtimeMs).toISOString()
-    // Count lines for message count estimate
-    try {
-      const raw2 = await io.readFile(`${root}/${entry}`)
-      session.messageCount = Math.max(
-        1,
-        raw2.split('\n').filter((l) => l.trim()).length
-      )
-    } catch {
-      // Already counted 1 above
-    }
-    sessions.push(session)
+    sessions.push(tauSessionFromPath(entry, firstLine, mtimeMs, lineCount))
   }
 
   // newest first
@@ -128,7 +121,7 @@ export async function loadTauSessions(
 // ─── Kappa board sessions ──────────────────────────────────────────────────
 
 export async function loadKappaSessions(
-  channels: readonly IChatChannel[] | null
+  channels: readonly IChatChannel[] | null | undefined
 ): Promise<UnifiedChatSession[]> {
   if (!channels || channels.length === 0) return []
   return channels.map((ch) => ({
@@ -139,7 +132,7 @@ export async function loadKappaSessions(
     messageCount: ch.messageCount,
     preview:
       ch.messages.length > 0
-        ? (ch.messages[ch.messages.length - 1].title ?? '')
+        ? ch.messages[ch.messages.length - 1].title ?? ''
         : '',
   }))
 }
@@ -203,33 +196,43 @@ export async function loadUnifiedChats(
   } = {}
 ): Promise<UnifiedChatsResult> {
   const tauRoot = options.tauRoot ?? DEFAULT_TAU_SESSIONS_ROOT
-  const tauIo =
-    options.tauIo ??
-    ({
-      readDir: (d: string) => import('fs').then((m) => m.readdirSync(d)),
-      readFile: (p: string) => import('fs').then((m) => m.readFileSync(p, 'utf8')),
-      stat: (p: string) =>
-        import('fs').then((m) => m.statSync(p)),
-    } as unknown as {
-      readDir: (d: string) => Promise<string[]>
-      readFile: (p: string) => Promise<string>
-      stat: (p: string) => Promise<{ mtimeMs: number }>
-    })
+  const kappaChannels = options.kappaChannels ?? null
 
-  const [tauSessions, kappaSessions, kimiSessions] = await Promise.all([
-    loadTauSessions(tauRoot, tauIo),
-    loadKappaSessions(options.kappaChannels),
+  // Browser SPA: tauIo must be injected (Node.js fs is unavailable in the
+  // browser). When absent we return an empty tau list rather than crashing.
+  if (options.tauIo) {
+    const [tauSessions, kappaSessions, kimiSessions] = await Promise.all([
+      loadTauSessions(tauRoot, options.tauIo),
+      loadKappaSessions(kappaChannels),
+      loadKimiSessions(options.kimiPorts),
+    ])
+    const all = [...tauSessions, ...kappaSessions, ...kimiSessions]
+    return {
+      sessions: all,
+      summary: {
+        total: all.length,
+        bySource: {
+          tau: tauSessions.length,
+          kappa: kappaSessions.length,
+          kimi: kimiSessions.length,
+        },
+      },
+    }
+  }
+
+  // Fallback when tauIo not provided (SPA without injected fs):
+  // still load kappa + kimi via HTTP
+  const [kappaSessions, kimiSessions] = await Promise.all([
+    loadKappaSessions(kappaChannels),
     loadKimiSessions(options.kimiPorts),
   ])
-
-  const all = [...tauSessions, ...kappaSessions, ...kimiSessions]
-
+  const all = [...kappaSessions, ...kimiSessions]
   return {
     sessions: all,
     summary: {
       total: all.length,
       bySource: {
-        tau: tauSessions.length,
+        tau: 0,
         kappa: kappaSessions.length,
         kimi: kimiSessions.length,
       },

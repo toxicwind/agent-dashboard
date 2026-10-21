@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import {
   loadTauSessions,
   loadKappaSessions,
-  loadKimiSessions,
   loadUnifiedChats,
 } from '@/data/unified-chats'
 import type { IChatChannel } from '@/types'
@@ -72,13 +71,17 @@ describe('unified-chats — kappa sessions', () => {
     expect(await loadKappaSessions(null)).toEqual([])
   })
 
+  it('returns empty when channels is undefined', async () => {
+    expect(await loadKappaSessions(undefined)).toEqual([])
+  })
+
   it('returns empty when channels is empty', async () => {
     expect(await loadKappaSessions([])).toEqual([])
   })
 })
 
 describe('unified-chats — aggregator', () => {
-  it('combines tau, kappa, and kimi sessions', async () => {
+  it('combines tau, kappa, and kimi sessions when tauIo is provided', async () => {
     const io = {
       readDir: async (_d: string) => ['test-session.jsonl'],
       readFile: async () => 'system: hi',
@@ -108,19 +111,12 @@ describe('unified-chats — aggregator', () => {
     expect(result.summary.bySource.kimi).toBe(0)
   })
 
-  it('handles all sources absent gracefully', async () => {
-    const io = {
-      readDir: async () => {
-        throw new Error('ENOENT')
-      },
-      readFile: async () => '',
-      stat: async () => ({ mtimeMs: 0 }),
-    }
+  it('handles all sources absent gracefully (no tauIo)', async () => {
     const result = await loadUnifiedChats({
-      tauIo: io,
       kimiPorts: [],
     })
     expect(result.summary.total).toBe(0)
     expect(result.sessions).toEqual([])
+    expect(result.summary.bySource.tau).toBe(0)
   })
 })

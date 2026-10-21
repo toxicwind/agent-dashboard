@@ -21,7 +21,7 @@ const SOURCES: { key: SourceFilter; label: string }[] = [
  * focus on one estate, or see everything together.
  */
 export function ChatsPage() {
-  const { channels, refreshChannels } = useControlPlane()
+  const { channels } = useControlPlane()
   const [sourceFilter, setSourceFilter] = useState<SourceFilter>('all')
 
   // Lazy-load unified sessions on mount
@@ -72,7 +72,7 @@ export function ChatsPage() {
                   : 'text-fg-500 hover:text-fg-200'
               }`}
             >
-              <span className="mr-1.5 inline-block size-1.5 rounded-full" style={{}} />
+              <span className="mr-1.5 inline-block size-1.5 rounded-full bg-fg-500" />
               {label}
             </button>
           ))}
