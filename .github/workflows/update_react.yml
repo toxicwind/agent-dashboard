@@ -23,10 +23,18 @@ jobs:
       # The built-in token is only used to read the facebook/react compare API
       # for the changelog. Everything that writes to this repository
       # authenticates as the release app instead.
-      contents: read
+      # Forks without the release app credentials fall back to the built-in
+      # token for writes, so it needs write permissions here. On upstream the
+      # extra permission is unused (the app token does the writes).
+      contents: write
+      pull-requests: write
     steps:
       - name: Create GitHub App token
         id: release-app-token
+        # Forks don't have the release app configured (no client ID var);
+        # skip and fall back to the built-in token for checkout and PR
+        # creation below.
+        if: vars.RELEASE_GITHUB_APP_CLIENT_ID != ''
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           client-id: ${{ vars.RELEASE_GITHUB_APP_CLIENT_ID }}
@@ -36,20 +44,32 @@ jobs:
           permission-contents: write
           permission-pull-requests: write
 
-      - name: Get GitHub App user ID
-        id: release-app-user
-        run: |
-          user_id="$(gh api "/users/${{ steps.release-app-token.outputs.app-slug }}[bot]" --jq .id)"
-          echo "user-id=$user_id" >> "$GITHUB_OUTPUT"
+      - name: Resolve release credentials
+        id: release-creds
         env:
-          GH_TOKEN: ${{ steps.release-app-token.outputs.token }}
+          # gh authenticates via this standard env var.
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -n "${{ steps.release-app-token.outputs.token }}" ]; then
+            echo "token=${{ steps.release-app-token.outputs.token }}" >> "$GITHUB_OUTPUT"
+            SLUG="${{ steps.release-app-token.outputs.app-slug }}"
+            LOOKUP="$SLUG[bot]"
+          else
+            # No app credentials on this repo; fall back to the built-in token
+            # and the triggering actor's identity.
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> "$GITHUB_OUTPUT"
+            SLUG="$(gh api user --jq .login)"
+            LOOKUP="$SLUG"
+          fi
+          echo "slug=$SLUG" >> "$GITHUB_OUTPUT"
+          echo "user-id=$(gh api "/users/$LOOKUP" --jq .id)" >> "$GITHUB_OUTPUT"
 
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           # Commits made with the default `GITHUB_TOKEN` won't trigger workflows.
           # See: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
-          token: ${{ steps.release-app-token.outputs.token }}
+          token: ${{ steps.release-creds.outputs.token }}
           persist-credentials: false
 
       - name: Setup node
@@ -75,8 +95,10 @@ jobs:
         env:
           # Only used to authenticate the facebook/react compare API request
           # that builds the changelog, so it doesn't hit anonymous rate limits.
-          # The commits, branch, and Pull Request all use the app token below.
+          # Release credentials come from the "Resolve release credentials" step:
+          # the release app when its credentials exist, otherwise the built-in
+          # token with the triggering actor's identity.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_GITHUB_TOKEN: ${{ steps.release-app-token.outputs.token }}
-          RELEASE_GITHUB_APP_SLUG: ${{ steps.release-app-token.outputs.app-slug }}
-          RELEASE_GITHUB_APP_USER_ID: ${{ steps.release-app-user.outputs.user-id }}
+          RELEASE_GITHUB_TOKEN: ${{ steps.release-creds.outputs.token }}
+          RELEASE_GITHUB_APP_SLUG: ${{ steps.release-creds.outputs.slug }}
+          RELEASE_GITHUB_APP_USER_ID: ${{ steps.release-creds.outputs.user-id }}
