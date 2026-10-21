@@ -1,5 +1,7 @@
 import type {
   IChatChannel,
+  IChatSurface,
+  IChatsModel,
   IDashboardLink,
   IDashboardsModel,
   IProviderStatusReadyModel,
@@ -145,5 +147,42 @@ export async function fetchDashboards(
     return model?.dashboards ?? []
   } catch {
     return []
+  }
+}
+
+/**
+ * Fetch the running agent chats.
+ *
+ * The server owns discovery: it reads the Tau rollout tree, the Kappa
+ * session databases, the Kimi web daemon and the Squawk board, and it
+ * resolves every surface from the estate SSOTs. The browser never guesses a
+ * port and never fabricates a row — an unreachable API yields `null`, which
+ * the UI renders as "unavailable", never as "empty because nothing exists".
+ */
+export async function fetchChats(
+  base = DEFAULT_CONTROL_API,
+  timeoutMs = 8000
+): Promise<IChatsModel | null> {
+  try {
+    const model = await getJson<IChatsModel>(`${base}/chats`, timeoutMs)
+    return model?.kind === 'ready' ? model : null
+  } catch {
+    return null
+  }
+}
+
+/** Fetch the chat surface registry (ports, daemon state, truthful liveness). */
+export async function fetchSurfaces(
+  base = DEFAULT_CONTROL_API,
+  timeoutMs = 8000
+): Promise<readonly IChatSurface[] | null> {
+  try {
+    const rows = await getJson<readonly IChatSurface[]>(
+      `${base}/surfaces`,
+      timeoutMs
+    )
+    return Array.isArray(rows) ? rows : []
+  } catch {
+    return null
   }
 }

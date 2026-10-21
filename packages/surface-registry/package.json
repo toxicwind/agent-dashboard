@@ -1,0 +1,25 @@
+{
+  "name": "@ranch/surface-registry",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Auto-composed registry of the estate's agent-chat web surfaces — generated from config/ports.env, pitchfork.d/*.toml and mise.toml",
+  "exports": {
+    ".": "./src/index.ts",
+    "./generated": "./src/generated/surfaces.ts"
+  },
+  "bin": {
+    "surface-registry": "./src/cli.ts"
+  },
+  "scripts": {
+    "generate": "node --experimental-strip-types src/cli.ts generate",
+    "check": "node --experimental-strip-types src/cli.ts check",
+    "typecheck": "tsc --noEmit",
+    "test": "TMPDIR=.vitest-tmp vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "typescript": "^5.9.2",
+    "vitest": "^4.0.18"
+  }
+}

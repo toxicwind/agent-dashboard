@@ -125,6 +125,56 @@ export interface IDashboardsModel {
   readonly dashboards: readonly IDashboardLink[]
 }
 
+// ─── Running agent chats (tau / kappa / kimi) ───────────────────────────────
+export type ChatAgent = 'tau' | 'kappa' | 'kimi' | 'squawk'
+
+/** `live` = written to within the live window; `idle` = persisted only. */
+export type ChatStatus = 'live' | 'idle' | 'unavailable'
+
+export interface IAgentChat {
+  readonly id: string
+  readonly agent: ChatAgent
+  readonly title: string
+  readonly status: ChatStatus
+  readonly updatedAt: string | null
+  readonly createdAt: string | null
+  readonly project: string | null
+  /** Deep link into that agent's own web UI, when one exists. */
+  readonly webUrl: string | null
+  readonly source: string
+}
+
+export interface IChatSurface {
+  readonly id: string
+  readonly agent: ChatAgent
+  readonly name: string
+  readonly daemon: string
+  readonly state: string
+  readonly port: number | null
+  readonly url: string | null
+  /**
+   * `null` = not probed from this box (unknown — never rendered as down),
+   * `true` = the surface answered, `false` = it refused.
+   */
+  readonly live: boolean | null
+  readonly auth: 'none' | 'bearer' | 'basic' | 'room-key'
+  readonly note: string
+}
+
+export interface IChatsModel {
+  readonly kind: 'ready'
+  readonly generatedAt: string
+  readonly summary: {
+    readonly total: number
+    readonly live: number
+    readonly idle: number
+    readonly unavailable: number
+  }
+  readonly rows: readonly IAgentChat[]
+  readonly surfaces: readonly IChatSurface[]
+  readonly notes: readonly string[]
+}
+
 // ─── Control-plane overall model ────────────────────────────────────────────
 export interface IControlPlaneModel {
   readonly providers: IProviderStatusReadyModel

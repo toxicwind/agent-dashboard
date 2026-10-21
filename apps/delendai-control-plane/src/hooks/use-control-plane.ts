@@ -12,9 +12,12 @@ export function useControlPlane() {
   const routerUsage = useControlPlaneStore((s) => s.routerUsage)
   const channels = useControlPlaneStore((s) => s.channels)
   const dashboards = useControlPlaneStore((s) => s.dashboards)
+  const chats = useControlPlaneStore((s) => s.chats)
+  const surfaces = useControlPlaneStore((s) => s.surfaces)
   const meta = useControlPlaneStore((s) => s.meta)
   const refresh = useControlPlaneStore((s) => s.refresh)
   const refreshChannels = useControlPlaneStore((s) => s.refreshChannels)
+  const refreshChats = useControlPlaneStore((s) => s.refreshChats)
 
   useEffect(() => {
     void refresh()
@@ -27,8 +30,11 @@ export function useControlPlane() {
     routerUsage,
     channels,
     dashboards,
+    chats,
+    surfaces,
     meta,
     refresh,
     refreshChannels,
+    refreshChats,
   }
 }
