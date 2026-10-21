@@ -25,7 +25,15 @@ export default defineConfig({
   server: {
     host: '127.0.0.1',
     port: Number(process.env.PORT ?? 25156),
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:25162',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
   },
+
   preview: {
     host: '127.0.0.1',
     port: Number(process.env.PORT ?? 25156),
