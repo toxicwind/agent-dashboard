@@ -7,6 +7,7 @@ import {
   MessagesSquare,
   GripVertical,
   Boxes,
+  PanelsTopLeft,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -15,6 +16,7 @@ const NAV = [
   { to: '/providers', label: 'Providers', icon: Boxes },
   { to: '/router', label: 'Router', icon: Radar },
   { to: '/chats', label: 'kappa Chats', icon: MessagesSquare },
+  { to: '/dashboards', label: 'Dashboards', icon: PanelsTopLeft },
 ]
 
 export function Sidebar() {

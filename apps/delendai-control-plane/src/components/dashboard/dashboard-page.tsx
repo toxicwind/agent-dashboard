@@ -19,7 +19,7 @@ export function DashboardPage() {
   const anyOver = (prov?.rows ?? []).some((r) =>
     r.quota.some((q) => (q.usedPct ?? 0) > 100)
   )
-  const totalSpend = (routerUsage ?? []).reduce((a, r) => a + r.cost, 0)
+  const totalSpend = (routerUsage?.rows ?? []).reduce((a, r) => a + r.cost, 0)
   const firstChat = channels?.[0]
 
   return (
@@ -74,7 +74,11 @@ export function DashboardPage() {
         <Kpi
           label="Router spend"
           value={<>${totalSpend.toFixed(2)}</>}
-          sub={`${routerUsage?.length ?? 0} usage rows`}
+          sub={
+            routerUsage?.present
+              ? `${routerUsage.rows.length} usage rows`
+              : 'no real usage data'
+          }
           tone="accent"
           icon={<Activity className="size-4" />}
         />

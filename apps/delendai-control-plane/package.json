@@ -9,7 +9,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run"
+    "server": "bun server.ts",
+    "test": "TMPDIR=.vitest-tmp vitest run"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

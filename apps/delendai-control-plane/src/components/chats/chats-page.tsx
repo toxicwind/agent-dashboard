@@ -6,8 +6,8 @@ import type { IChatChannel } from '@/types'
 
 /**
  * kappa Chats — the kappa board as squawk chat channels. Channel list is read
- * from ~/.fleet-bus/squawk-root (default bridge root); when the root is absent
- * a stub channel keeps the screen populated and explains the bridged state.
+ * from ~/.fleet-bus/squawk-root (default bridge root); an absent/empty root is
+ * a truthful empty view — never a stub.
  */
 export function ChatsPage() {
   const { channels } = useControlPlane()

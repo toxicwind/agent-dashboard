@@ -21,7 +21,7 @@ export function Topbar({
         )}
       >
         <Radio className="size-3" strokeWidth={2.5} />
-        {live ? 'API live' : 'fixture data'}
+        {live ? 'API live' : 'API unreachable'}
       </div>
     </header>
   )
