@@ -1,0 +1,23 @@
+{
+  "name": "@ranch/kimi-ext",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "omp-kimi — pure helpers for locating and driving the kimi-code CLI, plus the unified kimi web gateway",
+  "exports": {
+    "./kimi": "./src/kimi.ts",
+    "./web": "./src/web.ts",
+    "./extension": "./src/extension.ts"
+  },
+  "scripts": {
+    "typecheck": "bunx tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "zod": "^4"
+  },
+  "devDependencies": {
+    "@types/bun": "^1",
+    "typescript": "^5.9"
+  }
+}

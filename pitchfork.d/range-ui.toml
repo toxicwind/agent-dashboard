@@ -1,6 +1,5 @@
-# RANGE (agent-dashboard) — the coherent multi-tab dashboard project.
-# Its control-plane SPA (:25156) + Svelte passsthrough are served here; this
-# manifest exists so the pitchfork-compose accepts the range project.
+# DEPRECATED: moved to /home/toxic/estate/pitchfork.d/range-ui.toml
+# This file is kept as an archive; do not edit.
 [daemons.range-ui]
 run = "exec /home/toxic/.local/bin/bun run --cwd /home/toxic/estate/ranch/range/apps/delendai-control-plane dev:server"
 dir = "/home/toxic/estate/ranch/range"

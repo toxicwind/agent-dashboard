@@ -15,7 +15,7 @@ const NAV = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/providers', label: 'Providers', icon: Boxes },
   { to: '/router', label: 'Router', icon: Radar },
-  { to: '/chats', label: 'kappa Chats', icon: MessagesSquare },
+  { to: '/chats', label: 'Chats', icon: MessagesSquare },
   { to: '/dashboards', label: 'Dashboards', icon: PanelsTopLeft },
 ]
 
