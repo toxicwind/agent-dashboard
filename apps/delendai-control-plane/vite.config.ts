@@ -6,6 +6,17 @@ import { fileURLToPath } from 'node:url'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  test: {
+    environment: 'node',
+    include: ['src/**/*.test.ts'],
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.ts'],
+      reportsDirectory: './coverage', // v8 requires coverageFilesDirectory/reportsDirectory
+      exclude: ['src/**/*.test.ts', 'src/main.tsx'],
+      thresholds: { statements: 90, lines: 90, functions: 90, branches: 70 },
+    },
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
