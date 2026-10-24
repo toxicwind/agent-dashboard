@@ -16,8 +16,8 @@ bun test                # run all tests
 bun test --coverage     # run with V8 coverage report
 ```
 
-- **43 tests**, 0 failures, 159 expect() calls — all pass
-- **99.4% line coverage**, **94.3% function coverage** (≥90% target met)
+- **51 tests**, 0 failures — all pass (`bun test` in `apps/delendai-control-plane`)
+- **90.8% line coverage**, **94.3% function coverage** (≥90% function target met)
 - Uncovered lines are defensive error paths in `channels.ts` (stat/readDir/readFile failures)
 - Alias config: `@/*` → `src/*` via `vite.config.ts` and `tsconfig.json`
 

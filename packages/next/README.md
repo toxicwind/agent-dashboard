@@ -27,7 +27,7 @@ Used by some of the world's largest companies, Next.js lets you build full-stack
 - **Rust-powered tooling** — Turbopack for dev, optimized production builds
 - **App + Pages routers** — two routing paradigms, one framework
 - **Zero-config TypeScript** — type-safe from the first file
-- **Fleet dashboards** *(fork layer)* — `agent-swarm-dashboard` builds the agent UI on this engine
+- **Fleet dashboards** *(fork layer)* — `apps/delendai-control-plane` (services grid, provider/router quota dashboards, kappa-board chat channels) builds the agent UI on this engine
 - **Everything upstream** — `apps/`, `packages/`, `crates/`, examples, and evals from Next.js proper
 
 ---
@@ -59,16 +59,18 @@ flowchart TB
         P["📦 packages/<br/>next · eslint · typescript"]
     end
     subgraph Fork["🧬 agent-swarm-dashboard (this fork)"]
-        D["🖥️ agent dashboard UI<br/>fleet views over the live estate"]
-        A["📊 apps/<br/>dashboard apps incl. bundle-analyzer"]
+        D["🖥️ control-plane SPA<br/>apps/delendai-control-plane"]
+        A["📊 apps/<br/>delendai-control-plane · kimi-web · bundle-analyzer"]
+        F["📦 fork packages<br/>kimi-ext · surface-registry"]
     end
     R --> D
     T --> D
     P --> D
     A --> D
+    F --> D
 ```
 
-The monorepo layout is upstream Next.js: `packages/` (the framework), `crates/` (Rust tooling), `apps/` (first-party apps), `examples/`, `docs/` (the 01-app / 02-pages / 03-architecture / 04-community guides), `bench/`, `evals/`, and `turbopack/`. The fork layer adds the `agent-swarm-dashboard` package (v1.0.0) and dashboard apps on top.
+The monorepo layout is upstream Next.js: `packages/` (the framework), `crates/` (Rust tooling), `apps/` (first-party apps), `examples/`, `docs/` (the 01-app / 02-pages / 03-architecture / 04-community guides), `bench/`, `evals/`, and `turbopack/`. The fork layer adds `apps/delendai-control-plane` (control-plane SPA), `apps/kimi-web`, and `packages/kimi-ext` + `packages/surface-registry` on top of the upstream engine. (`agent-swarm-dashboard` is the monorepo workspace name in the root `package.json`, not a publishable package.)
 
 Key docs: [`docs/01-app`](docs/01-app) · [`docs/02-pages`](docs/02-pages) · [`docs/03-architecture`](docs/03-architecture) · [`docs/04-community`](docs/04-community) · [`UPGRADING.md`](UPGRADING.md) · [`contributing.md`](contributing.md)
 
@@ -90,7 +92,7 @@ node run-evals.js       # run evals
 pnpm lint               # lint the workspace
 ```
 
-Contributions are welcome and highly appreciated — but first review the [Contribution Guidelines](contributing.md). Newcomers: start with [**good first issues**](https://github.com/vercel/next.js/labels/good%20first%20issue). This fork tracks upstream `canary`; estate-specific UI work lands in the dashboard packages.
+Contributions are welcome and highly appreciated — but first review the [Contribution Guidelines](contributing.md). Newcomers: start with [**good first issues**](https://github.com/vercel/next.js/labels/good%20first%20issue). This fork is cut from upstream Next.js `canary`; estate-specific UI work lands in the fork-layer apps and packages (`apps/delendai-control-plane`, `apps/kimi-web`, `packages/kimi-ext`, `packages/surface-registry`).
 
 ---
 
