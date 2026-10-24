@@ -922,6 +922,25 @@ function squawkChats(board: Array<Record<string, unknown>>): AgentChat[] {
   })
 }
 
+async function tailscale() {
+  const { spawnSync } = await import('node:child_process')
+  const funnel = spawnSync('tailscale', ['funnel', 'status'], { encoding: 'utf-8', timeout: 5000 })
+  const node = spawnSync('tailscale', ['status', '--json'], { encoding: 'utf-8', timeout: 5000 })
+  let nodeInfo = ''
+  try {
+    const j = JSON.parse(node.stdout || '{}')
+    nodeInfo = `hostname: ${j.Self?.HostName ?? '?'}\ntailscaleIPs: ${(j.Self?.TailscaleIPs ?? []).join(', ')}\nonline: ${j.Self?.Online ?? '?'}`
+  } catch {
+    nodeInfo = node.stdout || node.stderr || 'unavailable'
+  }
+  return {
+    kind: 'ready' as const,
+    funnel: funnel.stdout || funnel.stderr || 'unavailable',
+    node: nodeInfo,
+    checkedAt: new Date().toISOString(),
+  }
+}
+
 async function chats() {
   const [tau, kappa, kimi, board, surfs] = [
     tauChats(30),
@@ -1003,6 +1022,8 @@ const server = Bun.serve({
           return respond(await surfaces())
         case '/dashboards':
           return respond(await dashboards())
+        case '/tailscale':
+          return respond(await tailscale())
         case '/router/usage':
           return respond(await routerUsage())
         default:

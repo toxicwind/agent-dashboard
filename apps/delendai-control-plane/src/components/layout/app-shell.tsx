@@ -5,6 +5,7 @@ import { useControlPlane } from '@/hooks/use-control-plane'
 import { DashboardPage } from '@/components/dashboard/dashboard-page'
 import { ProvidersPage } from '@/components/providers/providers-page'
 import { RouterPage } from '@/components/router/router-page'
+import { TailscalePage } from '@/components/tailscale/tailscale-page'
 import { ChatsPage } from '@/components/chats/chats-page'
 import { DashboardsPage } from '@/components/dashboards/dashboards-page'
 
@@ -23,6 +24,7 @@ export function App() {
             <Route path="/router" element={<RouterPage />} />
             <Route path="/chats" element={<ChatsPage />} />
             <Route path="/dashboards" element={<DashboardsPage />} />
+            <Route path="/tailscale" element={<TailscalePage />} />
           </Routes>
         </main>
       </div>

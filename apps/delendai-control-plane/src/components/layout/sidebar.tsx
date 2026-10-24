@@ -8,6 +8,7 @@ import {
   GripVertical,
   Boxes,
   PanelsTopLeft,
+  Globe,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -17,6 +18,7 @@ const NAV = [
   { to: '/router', label: 'Router', icon: Radar },
   { to: '/chats', label: 'Chats', icon: MessagesSquare },
   { to: '/dashboards', label: 'Dashboards', icon: PanelsTopLeft },
+  { to: '/tailscale', label: 'Tailscale', icon: Globe },
 ]
 
 export function Sidebar() {
